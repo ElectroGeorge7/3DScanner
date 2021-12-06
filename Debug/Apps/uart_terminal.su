@@ -1,0 +1,5 @@
+uart_terminal.c:22:19:uart_terminal_init	16	static
+uart_terminal.c:38:19:uart_terminal_print	24	static
+uart_terminal.c:56:19:uart_terminal_mem_transmit	16	static
+uart_terminal.c:76:19:uart_terminal_cmd_def	112	static
+uart_terminal.c:119:11:uart_terminal_scanf	16	static
