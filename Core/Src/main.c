@@ -21,27 +21,28 @@
 #include <stdio.h>
 
 #include "cmsis_os.h"
-#include "fatfs.h"
 #include "modules.h"
-#include "usb_device.h"
-#include "bsp_driver_sd.h"
+
+#include "storage_task.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
+DCMI_HandleTypeDef hdcmi;
+DMA_HandleTypeDef hdma_dcmi;
+
 I2C_HandleTypeDef hi2c2;
 UART_HandleTypeDef huart4;
 TIM_HandleTypeDef htim16;
-SD_HandleTypeDef hsd2;
-extern USBD_HandleTypeDef hUsbDeviceFS;
 
 
 osThreadId_t controlTaskHandle;
 const osThreadAttr_t controlTask_attributes = {
   .name = "controlTask",
-  .priority = (osPriority_t) osPriorityNormal3,
-  .stack_size = 128 * 4
+  //.priority = (osPriority_t) osPriorityNormal3,
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 768 * 4
 };
 
 osThreadId_t modulesTaskHandle;
@@ -54,64 +55,62 @@ const osThreadAttr_t modulesTask_attributes = {
 osThreadId_t storageTaskHandle;
 const osThreadAttr_t storageTask_attributes = {
   .name = "storageTask",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
+  //.priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityNormal3,
+  .stack_size = 768 * 4
 };
-
-
-uint8_t testVal = 0;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_UART4_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_TIM16_Init(void);
-static void MX_SDMMC2_SD_Init(void);
+static void MX_DCMI_Init(void);
 
 void ControlTask(void *argument);
 void ModulesTask(void *argument);
-void StorageTask(void *argument);
+//void StorageTask(void *argument);
 
-FRESULT open_append (
-    FIL* fp,            // [OUT] File object to create
-    const char* path    // [IN]  File name to be opened
-)
+#define IMG_ROWS   					144
+#define IMG_COLUMNS   				174
+volatile uint16_t frame_buffer[IMG_ROWS * IMG_COLUMNS];
+
+static void CPU_CACHE_Enable(void)
 {
-    FRESULT fr;
+  /* Enable I-Cache */
+  SCB_EnableICache();
 
-    // Opens an existing file. If not exist, creates a new file.
-    fr = f_open(fp, path, FA_WRITE | FA_OPEN_ALWAYS);
-    if (fr == FR_OK) {
-        // Seek to end of the file to append data
-        fr = f_lseek(fp, f_size(fp));
-        if (fr != FR_OK)
-            f_close(fp);
-    }
-    return fr;
+  /* Enable D-Cache */
+  SCB_EnableDCache();
 }
-
-uint32_t myVal;
 
 int main(void)
 {
-
-	 FATFS sdFatFs;
-	 FIL sdFile;
-	 FRESULT fr;
-
+  CPU_CACHE_Enable();
 	HAL_Init();
 
 	/* Configure the system clock */
 	SystemClock_Config();
-  
+  MX_DMA_Init();
 	MX_GPIO_Init();
-
 	MX_TIM16_Init();
-	MX_SDMMC2_SD_Init();
-	MX_FATFS_Init();
-	MX_USB_DEVICE_Init();
-  
+  MX_DCMI_Init();
 	HAL_Delay(2U);
+
+
+    HAL_GPIO_WritePin(CAM_En_GPIO_Port, CAM_En_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, CAM_Pwdn_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOA, CAM_Reset_Pin, GPIO_PIN_SET);
+
+    // Включение тактирования
+    //HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
+    //HAL_Delay(1000);
+    HAL_StatusTypeDef result;
+    result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
+    result = HAL_DCMI_Stop(&hdcmi);
+
+
 /*
   HAL_GPIO_WritePin(GPIOA, CAM_Pwdn_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOA, CAM_Reset_Pin, GPIO_PIN_SET);
@@ -217,7 +216,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_UART4|RCC_PERIPHCLK_SDMMC
-                              |RCC_PERIPHCLK_I2C1|RCC_PERIPHCLK_USB;
+                              |RCC_PERIPHCLK_I2C2|RCC_PERIPHCLK_USB;
   PeriphClkInitStruct.SdmmcClockSelection = RCC_SDMMCCLKSOURCE_PLL;
   PeriphClkInitStruct.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;
   PeriphClkInitStruct.I2c123ClockSelection = RCC_I2C123CLKSOURCE_D2PCLK1;
@@ -227,30 +226,55 @@ void SystemClock_Config(void)
     Error_Handler();
   }
  
+  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
+
   /** Enable USB Voltage detector
   */
   HAL_PWREx_EnableUSBVoltageDetector();
 }
 
-
 /**
-  * @brief SDMMC2 Initialization Function
+  * @brief DCMI Initialization Function
   * @param None
   * @retval None
   */
-static void MX_SDMMC2_SD_Init(void)
+static void MX_DCMI_Init(void)
 {
 
-  hsd2.Instance = SDMMC2;
-  hsd2.Init.ClockEdge = SDMMC_CLOCK_EDGE_RISING;
-  hsd2.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
-  hsd2.Init.BusWide = SDMMC_BUS_WIDE_4B;
-  hsd2.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_ENABLE;
-  hsd2.Init.ClockDiv = 4;
-  hsd2.Init.TranceiverPresent = SDMMC_TRANSCEIVER_NOT_PRESENT;
+  hdcmi.Instance = DCMI;
+  hdcmi.Init.SynchroMode = DCMI_SYNCHRO_HARDWARE;
+  hdcmi.Init.PCKPolarity = DCMI_PCKPOLARITY_RISING;
+  hdcmi.Init.VSPolarity = DCMI_VSPOLARITY_HIGH;
+  hdcmi.Init.HSPolarity = DCMI_HSPOLARITY_LOW;
+  hdcmi.Init.CaptureRate = DCMI_CR_ALL_FRAME;
+  hdcmi.Init.ExtendedDataMode = DCMI_EXTEND_DATA_8B;
+  hdcmi.Init.JPEGMode = DCMI_JPEG_DISABLE;
+  hdcmi.Init.ByteSelectMode = DCMI_BSM_ALL;
+  hdcmi.Init.ByteSelectStart = DCMI_OEBS_ODD;
+  hdcmi.Init.LineSelectMode = DCMI_LSM_ALL;
+  hdcmi.Init.LineSelectStart = DCMI_OELS_ODD;
+  if (HAL_DCMI_Init(&hdcmi) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+
+}
 
 /**
   * @brief GPIO Initialization Function
@@ -476,19 +500,18 @@ static void MX_I2C2_Init(void)
 
 }
 
+
 /**
   * @brief  Function implementing the controlTask thread.
   * @param  argument: Not used
   * @retval None
   */
-
 void ControlTask(void *argument)
 {
   MX_I2C2_Init();
   MX_UART4_Init();
   uart_terminal_init(&huart4);
   uart_terminal_print("Control task start!\n");
-  testVal += 1;
   for(;;)
   {
     //uart_terminal_print("Loop\n");
@@ -500,19 +523,6 @@ void ControlTask(void *argument)
 
 void ModulesTask(void *argument)
 {
-
-  testVal += 1;
-  for(;;)
-  {
-    osDelay(1);
-  }
-
-}
-
-void StorageTask(void *argument)
-{
-  testVal += 1;
-  MX_USB_DEVICE_Init();
 
   for(;;)
   {

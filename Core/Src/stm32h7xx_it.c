@@ -22,7 +22,7 @@
 #include "main.h"
 #include "stm32h7xx_it.h"
 
-
+extern DMA_HandleTypeDef hdma_dcmi;
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 extern TIM_HandleTypeDef htim13;
 
@@ -118,6 +118,13 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
+/**
+  * @brief This function handles DMA1 stream0 global interrupt.
+  */
+void DMA1_Stream0_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&hdma_dcmi);
+}
 
 /**
   * @brief This function handles TIM8 update interrupt and TIM13 global interrupt.

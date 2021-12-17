@@ -18,6 +18,7 @@ Apps/modules.o: ../Apps/modules.c ../Apps/modules.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dcmi.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h \
@@ -39,6 +40,17 @@ Apps/modules.o: ../Apps/modules.c ../Apps/modules.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_usb.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Core/Inc/main.h \
+ ../Apps/storage_task.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/App/fatfs.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/ff.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/integer.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/ffconf.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/bsp_driver_sd.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/fatfs_platform.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/ff_gen_drv.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/diskio.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/ff.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/sd_diskio.h \
  ../Apps/camera.h
 
 ../Apps/modules.h:
@@ -81,6 +93,8 @@ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7
 
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h:
 
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dcmi.h:
+
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h:
 
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h:
@@ -122,5 +136,27 @@ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pcd_ex.h:
 
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Core/Inc/main.h:
+
+../Apps/storage_task.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/App/fatfs.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/ff.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/integer.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/ffconf.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/bsp_driver_sd.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/fatfs_platform.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/ff_gen_drv.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/diskio.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Middlewares/Third_Party/FatFs/src/ff.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/FATFS/Target/sd_diskio.h:
 
 ../Apps/camera.h:

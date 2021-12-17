@@ -6,7 +6,8 @@
         "cstdint": "c",
         "type_traits": "c",
         "stm32h7xx.h": "c",
-        "stm32h7xx_hal_conf.h": "c"
+        "stm32h7xx_hal_conf.h": "c",
+        "storage_task.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled",
     "stm32-for-vscode.openOCDPath": false,

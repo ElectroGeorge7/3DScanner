@@ -1,5 +1,6 @@
 "Apps/camera.o"
 "Apps/modules.o"
+"Apps/storage_task.o"
 "Apps/uart_terminal.o"
 "Core/Src/freertos.o"
 "Core/Src/main.o"

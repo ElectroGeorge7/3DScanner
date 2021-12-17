@@ -13,6 +13,8 @@
 #include "main.h"
 #include "stm32h7xx_hal.h"
 
+#include "storage_task.h"
+
 #include "camera.h"
 
 struct sLaser_t laser = {
@@ -208,11 +210,6 @@ uint8_t SCCB_write_reg(uint8_t reg_addr, uint8_t data) {
 	return 0;
 }
 
-void Delay(volatile long nCount) {
-	while (nCount--) {
-	}
-}
-
 uint8_t OV7670_init(void) {
 	uint8_t data, i = 0;
 	uint8_t err;
@@ -222,16 +219,47 @@ uint8_t OV7670_init(void) {
 	for (i = 0; i < OV7670_REG_NUM; i++) {
 		data = OV7670_reg[i][1];
 		if (i == 0)
-			Delay(0xFFFF);
+			HAL_Delay(100);
 		err = SCCB_write_reg(OV7670_reg[i][0], data);
 
 		if (err == 1) {
 			break;
 		}
 
-		Delay(0xFFFF);
+		HAL_Delay(100);
 	}
 	return err;
+}
+
+#define IMG_ROWS   					144
+#define IMG_COLUMNS   				174
+extern DCMI_HandleTypeDef hdcmi;
+extern volatile uint16_t frame_buffer[IMG_ROWS * IMG_COLUMNS];
+HAL_StatusTypeDef result = HAL_OK;
+
+static char readBuf[256] = {0};
+static uint32_t br = 0;
+
+HAL_StatusTypeDef configCam(char *configFileName, char* readBuf, uint32_t bufSize){
+    uint32_t regAddr = 0, regVal = 0;
+    char *pEnd = NULL;
+    uint32_t hexNumb = 0;
+    do{
+        fRead(configFileName, readBuf, bufSize, &br);
+        if (pEnd == NULL){
+            regAddr = strtol(readBuf, &pEnd, 16);
+            regVal = strtol(pEnd, &pEnd, 16);
+            SCCB_write_reg((uint8_t)regAddr,(uint8_t)regVal);
+        };
+
+        while( pEnd-readBuf < br){
+            regAddr = strtol(pEnd, &pEnd, 16);
+            regVal = strtol(pEnd, &pEnd, 16);
+            SCCB_write_reg((uint8_t)regAddr,(uint8_t)regVal);
+        }
+    }while(br==bufSize);
+
+    return HAL_OK;
 }
 
 HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
@@ -339,11 +367,23 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
              */
 
             SCCB_write_reg(camera.regAddr, camera.regVal);
-            Delay(0xFFFF);
+            HAL_Delay(100);
+            
+            HAL_StatusTypeDef result;
+            result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
+	        result = HAL_DCMI_Stop(&hdcmi);
+            //SavePicture(camera.pictureName, frame_buffer, IMG_ROWS * IMG_COLUMNS *2 );
 
             //OV7670_init();
             // Нахождение файла конфигурации
+            /**
+             * @todo сейчас эта функция относится к ControlTask, поэтому тратит её стек,
+             * 		 в дальнейшем нужно будет создавать сообщения, чтоб чтение выполняло
+             * 		 именно storageTask
+             */
+            //configCam(camera.configFileName, readBuf, sizeof(readBuf));
             // Создание файла снимка 
+
             
         } else {
             // Подача питания на камеру и переход в режим готовности
@@ -356,6 +396,7 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
     }
     return HAL_ERROR;
 }
+
 
 HAL_StatusTypeDef stepM_cmd_define_cb(uint8_t *cmdStr){
     return HAL_OK;

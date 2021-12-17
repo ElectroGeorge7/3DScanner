@@ -24,6 +24,7 @@ Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Src/usbd_msc.o: \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h \
+ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dcmi.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h \
  G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h \
@@ -99,6 +100,8 @@ G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma_ex.h:
 
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_mdma.h:
+
+G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dcmi.h:
 
 G:/BMSTU/Bachelor_Qualification_Work/Code/3DScanner_WS/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_exti.h:
 
