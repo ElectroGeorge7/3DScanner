@@ -106,9 +106,9 @@ int main(void)
     // Включение тактирования
     //HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
     //HAL_Delay(1000);
-    HAL_StatusTypeDef result;
-    result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
-    result = HAL_DCMI_Stop(&hdcmi);
+    //HAL_StatusTypeDef result;
+    //result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
+    //result = HAL_DCMI_Stop(&hdcmi);
 
 
 /*

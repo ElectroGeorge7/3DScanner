@@ -1,6 +1,0 @@
-modules.c:123:19:laser_cmd_define_cb	32	static
-modules.c:202:9:SCCB_write_reg	32	static
-modules.c:213:9:OV7670_init	24	static
-modules.c:243:19:configCam	40	static
-modules.c:265:19:camera_cmd_define_cb	40	static
-modules.c:401:19:stepM_cmd_define_cb	16	static
