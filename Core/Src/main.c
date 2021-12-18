@@ -87,15 +87,15 @@ static void CPU_CACHE_Enable(void)
 
 int main(void)
 {
-  CPU_CACHE_Enable();
-	HAL_Init();
+    CPU_CACHE_Enable();
 
+	HAL_Init();
 	/* Configure the system clock */
 	SystemClock_Config();
-  MX_DMA_Init();
 	MX_GPIO_Init();
+	MX_DMA_Init();
 	MX_TIM16_Init();
-  MX_DCMI_Init();
+    MX_DCMI_Init();
 	HAL_Delay(2U);
 
 
@@ -104,11 +104,11 @@ int main(void)
     HAL_GPIO_WritePin(GPIOA, CAM_Reset_Pin, GPIO_PIN_SET);
 
     // Включение тактирования
-    //HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
+    HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
     //HAL_Delay(1000);
-    //HAL_StatusTypeDef result;
-    //result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
-    //result = HAL_DCMI_Stop(&hdcmi);
+    HAL_StatusTypeDef result;
+    result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
+    result = HAL_DCMI_Stop(&hdcmi);
 
 
 /*
@@ -225,8 +225,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
- 
-  HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
 
   /** Enable USB Voltage detector
   */
@@ -286,6 +284,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
