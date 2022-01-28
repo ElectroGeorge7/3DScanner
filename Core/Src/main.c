@@ -72,9 +72,10 @@ void ControlTask(void *argument);
 void ModulesTask(void *argument);
 //void StorageTask(void *argument);
 
-#define IMG_ROWS   					144
-#define IMG_COLUMNS   				174
-volatile uint16_t frame_buffer[IMG_ROWS * IMG_COLUMNS];
+#define IMG_ROWS   					240
+#define IMG_COLUMNS   			320
+//volatile uint16_t frame_buffer[IMG_ROWS * IMG_COLUMNS];
+volatile uint32_t frame_buffer[IMG_ROWS * IMG_COLUMNS / 2 ];
 
 static void CPU_CACHE_Enable(void)
 {
@@ -98,7 +99,7 @@ int main(void)
     MX_DCMI_Init();
 	HAL_Delay(2U);
 
-
+/*
     HAL_GPIO_WritePin(CAM_En_GPIO_Port, CAM_En_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOA, CAM_Pwdn_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOA, CAM_Reset_Pin, GPIO_PIN_SET);
@@ -109,7 +110,7 @@ int main(void)
     HAL_StatusTypeDef result;
     result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
     result = HAL_DCMI_Stop(&hdcmi);
-
+*/
 
 /*
   HAL_GPIO_WritePin(GPIOA, CAM_Pwdn_Pin, GPIO_PIN_RESET);

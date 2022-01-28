@@ -57,7 +57,8 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
+ void MX_USB_DEVICE_Start(void);
+ void MX_USB_DEVICE_Stop(void);
 /* USER CODE END PFP */
 
 /*

@@ -12,10 +12,12 @@
 
 #include "main.h"
 #include "stm32h7xx_hal.h"
+#include "usb_device.h"
 
 #include "storage_task.h"
 
 #include "camera.h"
+#include "ov7670reg.h"
 
 struct sLaser_t laser = {
     "laser",
@@ -199,6 +201,7 @@ const uint8_t OV7670_reg[OV7670_REG_NUM][2] = {
 		{ 0xa2, 0x02 }		//PCLK_DELAY_SCALING
 };
 
+	uint8_t response=0;
 uint8_t SCCB_write_reg(uint8_t reg_addr, uint8_t data) {
 	uint32_t timeout = 0xFFFFFF;
 
@@ -206,8 +209,10 @@ uint8_t SCCB_write_reg(uint8_t reg_addr, uint8_t data) {
 	tempData[0]=reg_addr;
 	tempData[1]=data;
 	HAL_I2C_Master_Transmit(&hi2c2, 0x42, tempData, 2, timeout);
-
-	return 0;
+	HAL_Delay(2);
+	HAL_I2C_Master_Transmit(&hi2c2, 0x42, tempData, 1, timeout);
+	HAL_I2C_Master_Receive(&hi2c2, 0x43, &response, 1, timeout);
+	return response;
 }
 
 uint8_t OV7670_init(void) {
@@ -231,10 +236,10 @@ uint8_t OV7670_init(void) {
 	return err;
 }
 
-#define IMG_ROWS   					144
-#define IMG_COLUMNS   				174
+#define IMG_ROWS   					240
+#define IMG_COLUMNS   				320
 extern DCMI_HandleTypeDef hdcmi;
-extern volatile uint16_t frame_buffer[IMG_ROWS * IMG_COLUMNS];
+extern volatile uint32_t frame_buffer[IMG_ROWS * IMG_COLUMNS / 2];
 HAL_StatusTypeDef result = HAL_OK;
 
 static char readBuf[256] = {0};
@@ -262,6 +267,392 @@ HAL_StatusTypeDef configCam(char *configFileName, char* readBuf, uint32_t bufSiz
     return HAL_OK;
 }
 
+void ConfigCamera(void){
+    SCCB_write_reg(0x12, 0x80); // RESET CAMERA
+    HAL_Delay(200);
+
+    SCCB_write_reg(REG_RGB444, 0x00);              // Disable RGB444
+    //SCCB_write_reg(REG_COM10, 0x02);               // 0x02   VSYNC negative (http://nasulica.homelinux.org/?p=959)
+    SCCB_write_reg(REG_MVFP, 0x27);                // mirror image 
+ 
+    SCCB_write_reg(REG_CLKRC, 0x80);               // prescaler x1     
+    SCCB_write_reg(DBLV, 0x0a);                    // bypass PLL 
+        
+    SCCB_write_reg(REG_COM11, 0x0A) ;
+    SCCB_write_reg(REG_TSLB, 0x04);                // 0D = UYVY  04 = YUYV     
+    SCCB_write_reg(REG_COM13, 0x88);               // connect to REG_TSLB
+
+    SCCB_write_reg(REG_COM7, 0x04);           // RGB + color bar disable 
+    SCCB_write_reg(REG_RGB444, 0x00);         // Disable RGB444
+    SCCB_write_reg(REG_COM15, 0x10);          // Set rgb565 with Full range    0xD0
+    SCCB_write_reg(REG_COM3, 0x04);
+    SCCB_write_reg(REG_CLKRC, 0x80);          // prescaler x1 
+
+    SCCB_write_reg(0x70, 0x3A);                   // Scaling Xsc
+    SCCB_write_reg(0x71, 0x35);                   // Scaling Ysc
+    SCCB_write_reg(0xA2, 0x02);                   // pixel clock delay
+
+    SCCB_write_reg(REG_COM14, 0x1a);          // divide by 4
+    SCCB_write_reg(0x72, 0x22);               // downsample by 4
+    SCCB_write_reg(0x73, 0xf2);               // divide by 4
+    SCCB_write_reg(REG_HREF, 0xa4);
+    SCCB_write_reg(REG_HSTART, 0x16);
+    SCCB_write_reg(REG_HSTOP, 0x04);
+    SCCB_write_reg(REG_VREF, 0x0a);   
+    SCCB_write_reg(REG_VSTART, 0x02);
+    SCCB_write_reg(REG_VSTOP, 0x7a);        
+            
+    SCCB_write_reg(0x7a, 0x20);
+    SCCB_write_reg(0x7b, 0x1c);
+    SCCB_write_reg(0x7c, 0x28);
+    SCCB_write_reg(0x7d, 0x3c);
+    SCCB_write_reg(0x7e, 0x5a);
+    SCCB_write_reg(0x7f, 0x68);
+    SCCB_write_reg(0x80, 0x76);
+    SCCB_write_reg(0x81, 0x80);
+    SCCB_write_reg(0x82, 0x88);
+    SCCB_write_reg(0x83, 0x8f);
+    SCCB_write_reg(0x84, 0x96);
+    SCCB_write_reg(0x85, 0xa3);
+    SCCB_write_reg(0x86, 0xaf);
+    SCCB_write_reg(0x87, 0xc4);
+    SCCB_write_reg(0x88, 0xd7);
+    SCCB_write_reg(0x89, 0xe8);
+    
+    SCCB_write_reg(0x13, 0xe0);
+    SCCB_write_reg(0x00, 0x00);
+    SCCB_write_reg(0x10, 0x00);
+    SCCB_write_reg(0x0d, 0x40);
+    SCCB_write_reg(0x14, 0x18);
+    SCCB_write_reg(0xa5, 0x05);
+    SCCB_write_reg(0xab, 0x07);
+    SCCB_write_reg(0x24, 0x95);
+    SCCB_write_reg(0x25, 0x33);
+    SCCB_write_reg(0x26, 0xe3);
+    SCCB_write_reg(0x9f, 0x78);
+    SCCB_write_reg(0xa0, 0x68);
+    SCCB_write_reg(0xa1, 0x03);
+    SCCB_write_reg(0xa6, 0xd8);
+    SCCB_write_reg(0xa7, 0xd8);
+    SCCB_write_reg(0xa8, 0xf0);
+    SCCB_write_reg(0xa9, 0x90);
+    SCCB_write_reg(0xaa, 0x94);
+    SCCB_write_reg(0x13, 0xe5);
+    
+    SCCB_write_reg(0x0e, 0x61);
+    SCCB_write_reg(0x0f, 0x4b);
+    SCCB_write_reg(0x16, 0x02);
+
+    SCCB_write_reg(0x21, 0x02);
+    SCCB_write_reg(0x22, 0x91);
+    SCCB_write_reg(0x29, 0x07);
+    SCCB_write_reg(0x33, 0x0b);
+    SCCB_write_reg(0x35, 0x0b);
+    SCCB_write_reg(0x37, 0x1d);
+    SCCB_write_reg(0x38, 0x71);
+    SCCB_write_reg(0x39, 0x2a);
+    SCCB_write_reg(0x3c, 0x78);
+    SCCB_write_reg(0x4d, 0x40);
+    SCCB_write_reg(0x4e, 0x20);
+    SCCB_write_reg(0x69, 0x00);
+
+    SCCB_write_reg(0x74, 0x10);
+    SCCB_write_reg(0x8d, 0x4f);
+    SCCB_write_reg(0x8e, 0x00);
+    SCCB_write_reg(0x8f, 0x00);
+    SCCB_write_reg(0x90, 0x00);
+    SCCB_write_reg(0x91, 0x00);
+    SCCB_write_reg(0x92, 0x00);
+
+    SCCB_write_reg(0x96, 0x00);
+    SCCB_write_reg(0x9a, 0x80);
+    SCCB_write_reg(0xb0, 0x84);
+    SCCB_write_reg(0xb1, 0x0c);
+    SCCB_write_reg(0xb2, 0x0e);
+    SCCB_write_reg(0xb3, 0x82);
+    SCCB_write_reg(0xb8, 0x0a);
+    
+    SCCB_write_reg(0x43, 0x0a);
+    SCCB_write_reg(0x44, 0xf0);
+    SCCB_write_reg(0x45, 0x34);
+    SCCB_write_reg(0x46, 0x58);
+    SCCB_write_reg(0x47, 0x28);
+    SCCB_write_reg(0x48, 0x3a);
+    SCCB_write_reg(0x59, 0x88);
+    SCCB_write_reg(0x5a, 0x88);
+    SCCB_write_reg(0x5b, 0x44);
+    SCCB_write_reg(0x5c, 0x67);
+    SCCB_write_reg(0x5d, 0x49);
+    SCCB_write_reg(0x5e, 0x0e);
+    SCCB_write_reg(0x64, 0x04);
+    SCCB_write_reg(0x65, 0x20);
+    SCCB_write_reg(0x66, 0x05);
+    SCCB_write_reg(0x94, 0x04);
+    SCCB_write_reg(0x95, 0x08);
+
+    SCCB_write_reg(0x6c, 0x0a);
+    SCCB_write_reg(0x6d, 0x55);
+    SCCB_write_reg(0x6e, 0x11);
+    SCCB_write_reg(0x6f, 0x9f);
+    SCCB_write_reg(0x6a, 0x40);
+    SCCB_write_reg(0x01, 0x40);
+    SCCB_write_reg(0x02, 0x40);
+    SCCB_write_reg(0x13, 0xe7);
+    //SCCB_write_reg(0x15, 0x02);
+
+    SCCB_write_reg(0x4f, 0x80);
+    SCCB_write_reg(0x50, 0x80);
+    SCCB_write_reg(0x51, 0x00);
+    SCCB_write_reg(0x52, 0x22);
+    SCCB_write_reg(0x53, 0x5e);
+    SCCB_write_reg(0x54, 0x80);
+    SCCB_write_reg(0x58, 0x9e);
+    
+    SCCB_write_reg(0x41, 0x08);
+    SCCB_write_reg(0x3f, 0x00);
+    SCCB_write_reg(0x75, 0x05);
+    SCCB_write_reg(0x76, 0xe1);
+    SCCB_write_reg(0x4c, 0x00);
+    SCCB_write_reg(0x77, 0x01);
+    SCCB_write_reg(0x3d, 0xc1);
+    SCCB_write_reg(0x4b, 0x09);
+    SCCB_write_reg(0xc9, 0x60);
+    SCCB_write_reg(0x41, 0x38);
+    SCCB_write_reg(0x56, 0x40);
+    
+    SCCB_write_reg(0x34, 0x11);
+    SCCB_write_reg(0x3b, 0x02);
+    SCCB_write_reg(0xa4, 0x88);
+    SCCB_write_reg(0x96, 0x00);
+    SCCB_write_reg(0x97, 0x30);
+    SCCB_write_reg(0x98, 0x20);
+    SCCB_write_reg(0x99, 0x30);
+    SCCB_write_reg(0x9a, 0x84);
+    SCCB_write_reg(0x9b, 0x29);
+    SCCB_write_reg(0x9c, 0x03);
+    SCCB_write_reg(0x9d, 0x4c);
+    SCCB_write_reg(0x9e, 0x3f);
+    SCCB_write_reg(0x78, 0x04);
+    
+    SCCB_write_reg(0x79, 0x01);
+    SCCB_write_reg(0xc8, 0xf0);
+    SCCB_write_reg(0x79, 0x0f);
+    SCCB_write_reg(0xc8, 0x00);
+    SCCB_write_reg(0x79, 0x10);
+    SCCB_write_reg(0xc8, 0x7e);
+    SCCB_write_reg(0x79, 0x0a);
+    SCCB_write_reg(0xc8, 0x80);
+    SCCB_write_reg(0x79, 0x0b);
+    SCCB_write_reg(0xc8, 0x01);
+    SCCB_write_reg(0x79, 0x0c);
+    SCCB_write_reg(0xc8, 0x0f);
+    SCCB_write_reg(0x79, 0x0d);
+    SCCB_write_reg(0xc8, 0x20);
+    SCCB_write_reg(0x79, 0x09);
+    SCCB_write_reg(0xc8, 0x80);
+    SCCB_write_reg(0x79, 0x02);
+    SCCB_write_reg(0xc8, 0xc0);
+    SCCB_write_reg(0x79, 0x03);
+    SCCB_write_reg(0xc8, 0x40);
+    SCCB_write_reg(0x79, 0x05);
+    SCCB_write_reg(0xc8, 0x30);
+    SCCB_write_reg(0x79, 0x26);
+    SCCB_write_reg(0x09, 0x03);
+    SCCB_write_reg(0x3b, 0x42);
+    
+    SCCB_write_reg(0xff, 0xff);   /* END MARKER */ 
+}
+
+
+void ConfigCamera2(void){
+	uint8_t resp=0;
+        // QQVGA RGB565
+	resp = SCCB_write_reg(REG_CLKRC,0x80);  // prescaler x1
+	HAL_Delay(100);
+    resp = SCCB_write_reg(REG_COM11,0x0A) ; // filtering and exposure timing
+    resp = SCCB_write_reg(REG_TSLB,0x04);   // 0D = UYVY  04 = YUYV  
+    resp = SCCB_write_reg(REG_COM7,0x04) ;  // RGB selection
+    resp = SCCB_write_reg(REG_RGB444, 0x00);    // turn off rgb44 ) (на всякий)
+    resp = SCCB_write_reg(REG_COM15, 0xd0);     // RGB 565 mode and default Output range: [00] to [FF]
+    resp = SCCB_write_reg(REG_HSTART,0x16) ;
+    resp = SCCB_write_reg(REG_HSTOP,0x04) ;
+    resp = SCCB_write_reg(REG_HREF,0x24) ;
+    resp = SCCB_write_reg(REG_VSTART,0x02) ;
+    resp = SCCB_write_reg(REG_VSTOP,0x7a) ;
+    resp = SCCB_write_reg(REG_VREF,0x0a) ;
+    //resp = SCCB_write_reg(REG_COM10,0x02) ;
+    resp = SCCB_write_reg(REG_COM3, 0x04);
+    resp = SCCB_write_reg(REG_COM14, 0x1a);
+    resp = SCCB_write_reg(REG_MVFP,0x07) ;
+    resp = SCCB_write_reg(0x72, 0x22);
+    resp = SCCB_write_reg(0x73, 0xf2);
+
+    // COLOR SETTING
+    resp = SCCB_write_reg(0x4f,0x80);
+    resp = SCCB_write_reg(0x50,0x80);
+    resp = SCCB_write_reg(0x51,0x00);
+    resp = SCCB_write_reg(0x52,0x22);
+    resp = SCCB_write_reg(0x53,0x5e);
+    resp = SCCB_write_reg(0x54,0x80);
+    resp = SCCB_write_reg(0x56,0x40);
+    resp = SCCB_write_reg(0x58,0x9e);
+    resp = SCCB_write_reg(0x59,0x88);
+    resp = SCCB_write_reg(0x5a,0x88);
+    resp = SCCB_write_reg(0x5b,0x44);
+    resp = SCCB_write_reg(0x5c,0x67);
+    resp = SCCB_write_reg(0x5d,0x49);
+    resp = SCCB_write_reg(0x5e,0x0e);
+    resp = SCCB_write_reg(0x69,0x00);
+    resp = SCCB_write_reg(0x6a,0x40);
+    resp = SCCB_write_reg(0x6b,0x0a);
+    resp = SCCB_write_reg(0x6c,0x0a);
+    resp = SCCB_write_reg(0x6d,0x55);
+    resp = SCCB_write_reg(0x6e,0x11);
+    resp = SCCB_write_reg(0x6f,0x9f);
+
+    resp = SCCB_write_reg(0xb0,0x84);
+}
+
+void ConfigCamera3(void){
+	uint8_t resp=0;
+    resp = SCCB_write_reg(0x12, 0x80);  // Reset all registers
+    HAL_Delay(100);
+    resp = SCCB_write_reg(0x12, 0x80);  // Reset all registers
+
+    resp = SCCB_write_reg(DBLV, 0x0a);       // bypass PLL 
+//    resp = SCCB_write_reg(REG_CLKRC,0x80);  // prescaler x1 (not documented)
+//   resp = SCCB_write_reg(REG_COM11,0x0A) ; // use prescaller of input freq: /12 // попробую, скорей всего нужно будет убрать
+    resp = SCCB_write_reg(0x11, 0x40);  // Use external clock directly (no clock pre-scale available)
+//    resp = SCCB_write_reg(0x11, 0x01); // prescaler /1
+
+//   resp = SCCB_write_reg(REG_COM10, 0x02); // 0x02   VSYNC negative (попробовать)
+    resp = SCCB_write_reg(REG_COM3, 0x04);
+    resp = SCCB_write_reg(REG_COM7,0x0c) ;  // RGB selection + (qcif? - 0x0e) +color bar
+    resp = SCCB_write_reg(REG_RGB444, 0x00);    // turn off rgb44 ) (на всякий)
+    resp = SCCB_write_reg(REG_COM15, 0xd0);  // RGB 565 mode and default Output range: [00] to [FF]
+
+
+ /*   resp = SCCB_write_reg(REG_COM10,0x02) ;  // 0x02   VSYNC negative ()
+
+
+// Image format
+    resp = SCCB_write_reg(0x12, 0x0e);  // 0x14 = QVGA size(RGB); 0x8 = QCIF(YUV), 0xc = QCIF(RGB) + color bar
+    resp = SCCB_write_reg(0x40, 0xd0);
+    resp = SCCB_write_reg(0x0c, 0x08);  // No tri-state at power-down period
+    resp = SCCB_write_reg(0x11, 0x40);
+
+    resp = SCCB_write_reg(0xb0, 0x84);  // Color mode (Not documented??)
+// Hardware window
+    resp = SCCB_write_reg(0x11, 0x01);  //PCLK settings, 15fps
+    resp = SCCB_write_reg(0x32, 0x80);  //HREF
+    resp = SCCB_write_reg(0x17, 0x17);  //HSTART
+    resp = SCCB_write_reg(0x18, 0x05);  //HSTOP
+    resp = SCCB_write_reg(0x03, 0x0a);  //VREF
+    resp = SCCB_write_reg(0x19, 0x02);  //VSTART
+    resp = SCCB_write_reg(0x1a, 0x7a);  //VSTOP
+// Scalling numbers
+    resp = SCCB_write_reg(0x70, 0x3a);  //X_SCALING
+    resp = SCCB_write_reg(0x71, 0x35);  //Y_SCALING
+    resp = SCCB_write_reg(0x72, 0x11);  //DCW_SCALING
+    resp = SCCB_write_reg(0x73, 0xf0);  //PCLK_DIV_SCALING
+    resp = SCCB_write_reg(0xa2, 0x02);  //PCLK_DELAY_SCALING
+*/
+}
+
+void ConfigCamera4(void){
+    uint8_t resp=0;
+    resp = SCCB_write_reg(0x12, 0x80); 
+    HAL_Delay(100);
+    resp = SCCB_write_reg(0x3a, 0x04);
+    resp = SCCB_write_reg(0x12, 0);
+    resp = SCCB_write_reg(0x15, 32);
+    resp = SCCB_write_reg(0x0c, 4);
+    resp = SCCB_write_reg(0x3e, 0x19);
+    resp = SCCB_write_reg(0x72, 0x11);
+    resp = SCCB_write_reg(0x73, 0xf1);
+    resp = SCCB_write_reg(0x17, 0x16);
+    resp = SCCB_write_reg(0x18, 0x04);
+    resp = SCCB_write_reg(0x32, 0xa4);
+    resp = SCCB_write_reg(0x19, 0x02);
+    resp = SCCB_write_reg(0x1a, 0x7a);
+    resp = SCCB_write_reg(0x03, 0x0a);
+    resp = SCCB_write_reg(0x12, 0);
+    resp = SCCB_write_reg(0x11, 0x12);
+}
+
+void ConfigCamera5(void){
+	uint8_t resp=0;
+    resp = SCCB_write_reg(0x12, 0x80);  // Reset all registers
+    HAL_Delay(100);
+    resp = SCCB_write_reg(0x12, 0x14);  // QVGA, RGB
+    resp = SCCB_write_reg(0x8C, 0x00);   // Disable RGB444
+    resp = SCCB_write_reg(0x40, 0x10 + 0xc0);   // RGB565, 00 - FF
+
+    resp = SCCB_write_reg(0x3A, 0x04 + 8);      // UYVY (why?)
+    resp = SCCB_write_reg(0x3D, 0x80 + 0x00);   // gamma enable, UV auto adjust, UYVY
+    resp = SCCB_write_reg(0xB0, 0x84);          // Color mode (Not documented??)
+
+    resp = SCCB_write_reg(REG_HSTART,0x16) ;
+    resp = SCCB_write_reg(REG_HSTOP,0x04) ;
+    resp = SCCB_write_reg(REG_HREF,0x24) ;
+    resp = SCCB_write_reg(REG_VSTART,0x02) ;
+    resp = SCCB_write_reg(REG_VSTOP,0x7a) ;
+    resp = SCCB_write_reg(REG_VREF,0x0a) ;
+    resp = SCCB_write_reg(0x72, 0x22);
+    resp = SCCB_write_reg(0x73, 0xf2);
+
+}
+
+void ConfigCamera6(void){
+	uint8_t resp=0;
+    resp = SCCB_write_reg(0x12, 0x80);  // Reset all registers
+    HAL_Delay(100);
+    resp = SCCB_write_reg(REG_CLKRC,0x80);
+    resp = SCCB_write_reg(REG_COM11,0x0A);
+    resp = SCCB_write_reg(REG_TSLB,0x04);
+    resp = SCCB_write_reg(REG_COM7,0x04);
+    resp = SCCB_write_reg(REG_RGB444, 0x00);
+    resp = SCCB_write_reg(REG_COM15, 0xd0);
+    resp = SCCB_write_reg(REG_HSTART,0x16);
+    resp = SCCB_write_reg(REG_HSTOP,0x04);
+    resp = SCCB_write_reg(REG_HREF,0x80);
+    resp = SCCB_write_reg(REG_VSTART,0x02);
+    resp = SCCB_write_reg(REG_VSTOP,0x7a);
+    resp = SCCB_write_reg(REG_VREF,0x0a);
+    //resp = SCCB_write_reg(REG_COM10,0x02);
+    resp = SCCB_write_reg(REG_COM3, 0x04);
+    resp = SCCB_write_reg(REG_COM14, 0x19);
+    //WriteReg(REG_MVFP,0x07 | (flipv ? 0x10:0) | (fliph ? 0x20:0)) ;
+    resp = SCCB_write_reg(0x72, 0x11);
+    resp = SCCB_write_reg(0x73, 0xf1);
+    // COLOR SETTING
+    resp = SCCB_write_reg(0x4f,0x80);
+    resp = SCCB_write_reg(0x50,0x80);
+    resp = SCCB_write_reg(0x51,0x00);
+    resp = SCCB_write_reg(0x52,0x22);
+    resp = SCCB_write_reg(0x53,0x5e);
+    resp = SCCB_write_reg(0x54,0x80);
+    resp = SCCB_write_reg(0x56,0x40);
+    resp = SCCB_write_reg(0x58,0x9e);
+    resp = SCCB_write_reg(0x59,0x88);
+    resp = SCCB_write_reg(0x5a,0x88);
+    resp = SCCB_write_reg(0x5b,0x44);
+    resp = SCCB_write_reg(0x5c,0x67);
+    resp = SCCB_write_reg(0x5d,0x49);
+    resp = SCCB_write_reg(0x5e,0x0e);
+    resp = SCCB_write_reg(0x69,0x00);
+    resp = SCCB_write_reg(0x6a,0x40);
+    resp = SCCB_write_reg(0x6b,0x0a);
+    resp = SCCB_write_reg(0x6c,0x0a);
+    resp = SCCB_write_reg(0x6d,0x55);
+    resp = SCCB_write_reg(0x6e,0x11);
+    resp = SCCB_write_reg(0x6f,0x9f);
+
+    resp = SCCB_write_reg(0xb0,0x84);
+
+}
+
+
 HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
     uint8_t i = 0;
     char *pParamStr = NULL;
@@ -269,6 +660,8 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
     uint8_t paramValLen = 0;
     char paramValStr[4] = {0};
     
+    uint8_t resp=0;
+
     if (cmdStr != NULL){
         
         for ( i = 0; i < 2 ; i++){
@@ -366,13 +759,25 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
              * @todo определять, если регистр уже записан, чтобы не было повтороной записи
              */
 
-            SCCB_write_reg(camera.regAddr, camera.regVal);
+            if ( camera.regAddr != 0 ){
+            	resp = SCCB_write_reg(camera.regAddr, camera.regVal);
+				HAL_Delay(100);
+            }
+
+            MX_USB_DEVICE_Stop();
+
+            if (camera.pictureName[0] != 0 && camera.regAddr == 0 )
+            	ConfigCamera6();
+
             HAL_Delay(100);
             
             HAL_StatusTypeDef result;
             result = HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t) frame_buffer, IMG_ROWS * IMG_COLUMNS / 2);
 	        result = HAL_DCMI_Stop(&hdcmi);
-            //SavePicture(camera.pictureName, frame_buffer, IMG_ROWS * IMG_COLUMNS *2 );
+	        if (camera.pictureName[0] != 0 )
+	        	SavePicture(camera.pictureName, (uint16_t*)frame_buffer, IMG_ROWS * IMG_COLUMNS );
+
+            MX_USB_DEVICE_Start();
 
             //OV7670_init();
             // Нахождение файла конфигурации
@@ -396,6 +801,7 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
     }
     return HAL_ERROR;
 }
+
 
 
 HAL_StatusTypeDef stepM_cmd_define_cb(uint8_t *cmdStr){

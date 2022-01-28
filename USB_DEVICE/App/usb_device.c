@@ -56,6 +56,16 @@ USBD_HandleTypeDef hUsbDeviceFS;
  */
 /* USER CODE BEGIN 1 */
 
+void MX_USB_DEVICE_Start(void)
+{
+	USBD_Start(&hUsbDeviceFS);
+}
+
+void MX_USB_DEVICE_Stop(void)
+{
+	USBD_Stop(&hUsbDeviceFS);
+}
+
 /* USER CODE END 1 */
 
 /**

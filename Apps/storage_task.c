@@ -65,20 +65,52 @@ void fRead(char *configFileName, uint8_t *buf, uint32_t num, uint32_t *br){
   f_close(&readFile);
 }
 
-#define WRITE_BUFE_SIZE 200
-uint32_t bw = 0;
+#define WRITE_BUFE_SIZE 200//20
+UINT bw = 0;
+uint8_t rgbBuf[WRITE_BUFE_SIZE*3] = {0};
 void SavePicture(char *pictureName, uint16_t *buf, uint32_t num){
   FIL writeFile;
   FRESULT fr;
+  uint16_t *pBuf = rgbBuf;
+  uint32_t counter = 0;
+  uint8_t rVal5, gVal6, bVal5;
+  uint8_t desc[] = 
+  { 0x50, 0x36,         // P6
+    0x0a, 
+    0x33, 0x32, 0x30,   // 320 
+    0x20, 
+    0x32, 0x34, 0x30,   // 240
+    0x0a, 
+    0x32, 0x35, 0x35,   // 255
+    0x0a
+  };
+
+  uint32_t temp = 0;
 
   do{
       fr = open_append(&writeFile, pictureName);
   }while (fr);
 
+  // add file descriptor for .rgb format 
+  fr = f_write(&writeFile, desc, sizeof(desc), &bw);
+  fr = f_sync(&writeFile);
+
   do{
-    fr = f_write(&writeFile, buf, WRITE_BUFE_SIZE, &bw);
+
+	for (uint32_t j = 0; j < WRITE_BUFE_SIZE*3; j+=3, counter++){
+		  rVal5=(uint8_t)( (buf[counter] & 0b11111000) );
+		  gVal6=(uint8_t)( (buf[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
+		  gVal6 |= (uint8_t)( (buf[counter] & 0b111) << 5 );            // старшие разряды
+		  bVal5=(uint8_t)( (buf[counter] & 0b1111100000000) >> 5 );
+		  rgbBuf[j] = (uint8_t) ( rVal5 );		// red
+		  rgbBuf[j+1]= (uint8_t) ( gVal6 );	// green
+		  rgbBuf[j+2]= (uint8_t) ( bVal5 );		// blue
+	}
+    fr = f_write(&writeFile, pBuf, WRITE_BUFE_SIZE*3, &bw);
     fr = f_sync(&writeFile);
-  }while( bw == WRITE_BUFE_SIZE);
+    memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
+    //counter += WRITE_BUFE_SIZE;
+  }while( counter < num);
 
   // Close the file
   f_close(&writeFile);
