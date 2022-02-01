@@ -173,6 +173,7 @@ SECTIONS
     . = ALIGN(8);
   } >RAM_D1
 
+
   /* Remove information from the compiler libraries */
   /DISCARD/ :
   {
@@ -180,6 +181,14 @@ SECTIONS
     libm.a ( * )
     libgcc.a ( * )
   }
-
+	
+  .ram_d2 :
+  {
+    . = ALIGN(4);
+    *(.ram_d2)           /* .ram_d2 sections */
+    *(.ram_d2*)          /* .ram_d2* sections */
+    . = ALIGN(4);
+  }	>RAM_D2
+	
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }
