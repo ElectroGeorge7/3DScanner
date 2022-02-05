@@ -657,7 +657,8 @@ void ConfigCamera7(void){
     HAL_Delay(100);
          resp = SCCB_write_reg(REG_CLKRC, 0x01);     
          resp = SCCB_write_reg(REG_TSLB,  0x04);    
-         resp = SCCB_write_reg(REG_COM7, 0x01);        
+         //resp = SCCB_write_reg(REG_COM7, 0x01); 
+        resp = SCCB_write_reg(REG_COM7, 0x04);       
          resp = SCCB_write_reg(DBLV, 0x4a); 
          resp = SCCB_write_reg(REG_COM3, 0);        
          resp = SCCB_write_reg(REG_COM14, 0);
@@ -689,149 +690,209 @@ void ConfigCamera7(void){
          resp = SCCB_write_reg(0x88, 0xd7);         
          resp = SCCB_write_reg(0x89, 0xe8);
         
-        /* AGC and AEC parameters.  Note we start by disabling those features,
-        then turn them only after tweaking the values. */
-         resp = SCCB_write_reg(0x13, COM8_FASTAEC | COM8_AECSTEP | COM8_BFILT);
-         resp = SCCB_write_reg(0x00, 0);        
-         resp = SCCB_write_reg(0x10, 0);
-         resp = SCCB_write_reg(0x0d, 0x40); 
-         resp = SCCB_write_reg(0x14, 0x18); 
-         resp = SCCB_write_reg(0xa5, 0x05);  
-         resp = SCCB_write_reg(0xab, 0x07);
-         resp = SCCB_write_reg(0x24, 0x95);      
-         resp = SCCB_write_reg(0x25, 0x33);
-         resp = SCCB_write_reg(0x26, 0xe3);      
-         resp = SCCB_write_reg(0x9f, 0x78);
-         resp = SCCB_write_reg(0xa0, 0x68);   
-         resp = SCCB_write_reg(0xa1, 0x03); 
-         resp = SCCB_write_reg(0xa6, 0xd8);   
-         resp = SCCB_write_reg(0xa7, 0xd8);
-         resp = SCCB_write_reg(0xa8, 0xf0);   
-         resp = SCCB_write_reg(0xa9, 0x90);
-         resp = SCCB_write_reg(0xaa, 0x94);
-         resp = SCCB_write_reg(0x13, COM8_FASTAEC|COM8_AECSTEP|COM8_BFILT|COM8_AGC|COM8_AEC);  
-        
-        /* Almost all of these are magic "reserved" values.  */    
-         resp = SCCB_write_reg(0x0e, 0x61);     
-         resp = SCCB_write_reg(0x0f, 0x4b);
-         resp = SCCB_write_reg(0x16, 0x02);        
-         resp = SCCB_write_reg(0x1e, 0x27);
-         resp = SCCB_write_reg(0x21, 0x02);         
-         resp = SCCB_write_reg(0x22, 0x91);
-         resp = SCCB_write_reg(0x29, 0x07);         
-         resp = SCCB_write_reg(0x33, 0x0b);
-         resp = SCCB_write_reg(0x35, 0x0b);         
-         resp = SCCB_write_reg(0x37, 0x1d);
-         resp = SCCB_write_reg(0x38, 0x71);         
-         resp = SCCB_write_reg(0x39, 0x2a);
-         resp = SCCB_write_reg(0x3c, 0x78);    
-         resp = SCCB_write_reg(0x4d, 0x40);
-         resp = SCCB_write_reg(0x4e, 0x20);         
-         resp = SCCB_write_reg(0x69, 0);
-         resp = SCCB_write_reg(0x6b, 0x0a);         
-         resp = SCCB_write_reg(0x74, 0x10);
-         resp = SCCB_write_reg(0x8d, 0x4f);         
-         resp = SCCB_write_reg(0x8e, 0);
-         resp = SCCB_write_reg(0x8f, 0);            
-         resp = SCCB_write_reg(0x90, 0);
-         resp = SCCB_write_reg(0x91, 0);            
-         resp = SCCB_write_reg(0x96, 0);
-         resp = SCCB_write_reg(0x9a, 0);          
-         resp = SCCB_write_reg(0xb0, 0x84);
-         resp = SCCB_write_reg(0xb1, 0x0c);         
-         resp = SCCB_write_reg(0xb2, 0x0e);
-         resp = SCCB_write_reg(0xb3, 0x82);         
-         resp = SCCB_write_reg(0xb8, 0x0a);
-        
-        /* More reserved magic, some of which tweaks white balance */
-         resp = SCCB_write_reg(0x43, 0x0a);         
-         resp = SCCB_write_reg(0x44, 0xf0);
-         resp = SCCB_write_reg(0x45, 0x34);         
-         resp = SCCB_write_reg(0x46, 0x58);
-         resp = SCCB_write_reg(0x47, 0x28);         
-         resp = SCCB_write_reg(0x48, 0x3a);
-         resp = SCCB_write_reg(0x59, 0x88);         
-         resp = SCCB_write_reg(0x5a, 0x88);
-         resp = SCCB_write_reg(0x5b, 0x44);         
-         resp = SCCB_write_reg(0x5c, 0x67);
-         resp = SCCB_write_reg(0x5d, 0x49);         
-         resp = SCCB_write_reg(0x5e, 0x0e);
-         resp = SCCB_write_reg(0x6c, 0x0a);         
-         resp = SCCB_write_reg(0x6d, 0x55);
-         resp = SCCB_write_reg(0x6e, 0x11);         
-         resp = SCCB_write_reg(0x6f, 0x9f); 
-         resp = SCCB_write_reg(0x6a, 0x40);         
-         resp = SCCB_write_reg(0x01, 0x40);
-         resp = SCCB_write_reg(0x02, 0x60);
-         resp = SCCB_write_reg(0x13, COM8_FASTAEC|COM8_AECSTEP|COM8_BFILT|COM8_AGC|COM8_AEC|COM8_AWB);  
-        
-        /* Matrix coefficients */
-         resp = SCCB_write_reg(0x4f, 0x80);         
-         resp = SCCB_write_reg(0x50, 0x80);
-         resp = SCCB_write_reg(0x51, 0);            
-         resp = SCCB_write_reg(0x52, 0x22);
-         resp = SCCB_write_reg(0x53, 0x5e);         
-         resp = SCCB_write_reg(0x54, 0x80);
-         resp = SCCB_write_reg(0x58, 0x9e);
-        
-         resp = SCCB_write_reg(0x41, 0x08);   
-         resp = SCCB_write_reg(0x3f, 0);
-         resp = SCCB_write_reg(0x75, 0x05);         
-         resp = SCCB_write_reg(0x76, 0xe1);
-         resp = SCCB_write_reg(0x4c, 0);            
-         resp = SCCB_write_reg(0x77, 0x01);
-         resp = SCCB_write_reg(0x3d, 0xc3);    
-         resp = SCCB_write_reg(0x4b, 0x09);
-         resp = SCCB_write_reg(0xc9, 0x60);         
-         resp = SCCB_write_reg(0x41, 0x38);
-         resp = SCCB_write_reg(0x56, 0x40);
-        
-         resp = SCCB_write_reg(0x34, 0x11);         
-         resp = SCCB_write_reg(0x3b, COM11_EXP|COM11_HZAUTO);
-         resp = SCCB_write_reg(0xa4, 0x88);         
-         resp = SCCB_write_reg(0x96, 0);
-         resp = SCCB_write_reg(0x97, 0x30);         
-         resp = SCCB_write_reg(0x98, 0x20);
-         resp = SCCB_write_reg(0x99, 0x30);         
-         resp = SCCB_write_reg(0x9a, 0x84);
-         resp = SCCB_write_reg(0x9b, 0x29);         
-         resp = SCCB_write_reg(0x9c, 0x03);
-         resp = SCCB_write_reg(0x9d, 0x4c);         
-         resp = SCCB_write_reg(0x9e, 0x3f);
-         resp = SCCB_write_reg(0x78, 0x04);
-        
-        /* Extra-weird stuff.  Some sort of multiplexor register */
-         resp = SCCB_write_reg(0x79, 0x01);         
-         resp = SCCB_write_reg(0xc8, 0xf0);
-         resp = SCCB_write_reg(0x79, 0x0f);         
-         resp = SCCB_write_reg(0xc8, 0x00);
-         resp = SCCB_write_reg(0x79, 0x10);         
-         resp = SCCB_write_reg(0xc8, 0x7e);
-         resp = SCCB_write_reg(0x79, 0x0a);         
-         resp = SCCB_write_reg(0xc8, 0x80);
-         resp = SCCB_write_reg(0x79, 0x0b);         
-         resp = SCCB_write_reg(0xc8, 0x01);
-         resp = SCCB_write_reg(0x79, 0x0c);         
-         resp = SCCB_write_reg(0xc8, 0x0f);
-         resp = SCCB_write_reg(0x79, 0x0d);         
-         resp = SCCB_write_reg(0xc8, 0x20);
-         resp = SCCB_write_reg(0x79, 0x09);         
-         resp = SCCB_write_reg(0xc8, 0x80);
-         resp = SCCB_write_reg(0x79, 0x02);         
-         resp = SCCB_write_reg(0xc8, 0xc0);
-         resp = SCCB_write_reg(0x79, 0x03);         
-         resp = SCCB_write_reg(0xc8, 0x40);
-         resp = SCCB_write_reg(0x79, 0x05);         
-         resp = SCCB_write_reg(0xc8, 0x30);
-         resp = SCCB_write_reg(0x79, 0x26);
+
         
          resp = SCCB_write_reg(0xff, 0xff); /* END MARKER */    
 }
 
+
+void ConfigCamera8(void){
+	uint8_t resp=0;
+    resp = SCCB_write_reg(0x12, 0x80);  // Reset all registers
+    HAL_Delay(100);
+    //resp = SCCB_write_reg(REG_CLKRC,0x80);
+    resp = SCCB_write_reg(REG_RGB444, 0x00);
+    resp = SCCB_write_reg(REG_CLKRC, 0x01);     
+    resp = SCCB_write_reg(REG_TSLB,  0x04);
+    resp = SCCB_write_reg(REG_COM7, 0x04);  
+    resp = SCCB_write_reg(DBLV, 0x4a); 
+    resp = SCCB_write_reg(REG_COM3, 0);        
+    resp = SCCB_write_reg(REG_COM14, 0);
+
+    //resp = SCCB_write_reg(REG_COM11,0x0A);
+    resp = SCCB_write_reg(REG_COM15, 0xd0);   
+    //resp = SCCB_write_reg(REG_COM7, 0x01); 
+
+
+    //resp = SCCB_write_reg(0x40, 0x10 + 0xc0);   // RGB565, 00 - FF
+ 
+
+    resp = SCCB_write_reg(REG_HSTART, 0x13);   
+    resp = SCCB_write_reg(REG_HSTOP, 0x01);
+    resp = SCCB_write_reg(REG_HREF, 0xb6);     
+    resp = SCCB_write_reg(REG_VSTART, 0x02);
+    resp = SCCB_write_reg(REG_VSTOP, 0x7a);    
+    resp = SCCB_write_reg(REG_VREF, 0x0a);
+    resp = SCCB_write_reg(0x72, 0x11);         
+    resp = SCCB_write_reg(0x73, 0xf0);  
+
+    // Gamma curve values 
+    resp = SCCB_write_reg(0x7a, 0x20);         
+    resp = SCCB_write_reg(0x7b, 0x10);
+    resp = SCCB_write_reg(0x7c, 0x1e);         
+    resp = SCCB_write_reg(0x7d, 0x35);
+    resp = SCCB_write_reg(0x7e, 0x5a);         
+    resp = SCCB_write_reg(0x7f, 0x69);
+    resp = SCCB_write_reg(0x80, 0x76);         
+    resp = SCCB_write_reg(0x81, 0x80);
+    resp = SCCB_write_reg(0x82, 0x88);         
+    resp = SCCB_write_reg(0x83, 0x8f);
+    resp = SCCB_write_reg(0x84, 0x96);         
+    resp = SCCB_write_reg(0x85, 0xa3);
+    resp = SCCB_write_reg(0x86, 0xaf);         
+    resp = SCCB_write_reg(0x87, 0xc4);
+    resp = SCCB_write_reg(0x88, 0xd7);         
+    resp = SCCB_write_reg(0x89, 0xe8);
+    
+        // AGC and AEC parameters.  Note we start by disabling those features,
+        // then turn them only after tweaking the values. 
+        resp = SCCB_write_reg(0x13, COM8_FASTAEC | COM8_AECSTEP | COM8_BFILT);
+        resp = SCCB_write_reg(0x00, 0);        
+        resp = SCCB_write_reg(0x10, 0);
+        resp = SCCB_write_reg(0x0d, 0x40); 
+        resp = SCCB_write_reg(0x14, 0x18); 
+        resp = SCCB_write_reg(0xa5, 0x05);  
+        resp = SCCB_write_reg(0xab, 0x07);
+        resp = SCCB_write_reg(0x24, 0x95);      
+        resp = SCCB_write_reg(0x25, 0x33);
+        resp = SCCB_write_reg(0x26, 0xe3);      
+        resp = SCCB_write_reg(0x9f, 0x78);
+        resp = SCCB_write_reg(0xa0, 0x68);   
+        resp = SCCB_write_reg(0xa1, 0x03); 
+        resp = SCCB_write_reg(0xa6, 0xd8);   
+        resp = SCCB_write_reg(0xa7, 0xd8);
+        resp = SCCB_write_reg(0xa8, 0xf0);   
+        resp = SCCB_write_reg(0xa9, 0x90);
+        resp = SCCB_write_reg(0xaa, 0x94);
+        resp = SCCB_write_reg(0x13, COM8_FASTAEC|COM8_AECSTEP|COM8_BFILT|COM8_AGC|COM8_AEC);  
+        
+        // Almost all of these are magic "reserved" values.      
+        resp = SCCB_write_reg(0x0e, 0x61);     
+        resp = SCCB_write_reg(0x0f, 0x4b);
+        resp = SCCB_write_reg(0x16, 0x02);        
+        resp = SCCB_write_reg(0x1e, 0x27);
+        resp = SCCB_write_reg(0x21, 0x02);         
+        resp = SCCB_write_reg(0x22, 0x91);
+        resp = SCCB_write_reg(0x29, 0x07);         
+        resp = SCCB_write_reg(0x33, 0x0b);
+        resp = SCCB_write_reg(0x35, 0x0b);         
+        resp = SCCB_write_reg(0x37, 0x1d);
+        resp = SCCB_write_reg(0x38, 0x71);         
+        resp = SCCB_write_reg(0x39, 0x2a);
+        resp = SCCB_write_reg(0x3c, 0x78);    
+        resp = SCCB_write_reg(0x4d, 0x40);
+        resp = SCCB_write_reg(0x4e, 0x20);         
+        resp = SCCB_write_reg(0x69, 0);
+        resp = SCCB_write_reg(0x6b, 0x0a);         
+        resp = SCCB_write_reg(0x74, 0x10);
+        resp = SCCB_write_reg(0x8d, 0x4f);         
+        resp = SCCB_write_reg(0x8e, 0);
+        resp = SCCB_write_reg(0x8f, 0);            
+        resp = SCCB_write_reg(0x90, 0);
+        resp = SCCB_write_reg(0x91, 0);            
+        resp = SCCB_write_reg(0x96, 0);
+        resp = SCCB_write_reg(0x9a, 0);          
+        resp = SCCB_write_reg(0xb0, 0x84);
+        resp = SCCB_write_reg(0xb1, 0x0c);         
+        resp = SCCB_write_reg(0xb2, 0x0e);
+        resp = SCCB_write_reg(0xb3, 0x82);         
+        resp = SCCB_write_reg(0xb8, 0x0a);
+        
+        // More reserved magic, some of which tweaks white balance 
+        resp = SCCB_write_reg(0x43, 0x0a);         
+        resp = SCCB_write_reg(0x44, 0xf0);
+        resp = SCCB_write_reg(0x45, 0x34);         
+        resp = SCCB_write_reg(0x46, 0x58);
+        resp = SCCB_write_reg(0x47, 0x28);         
+        resp = SCCB_write_reg(0x48, 0x3a);
+        resp = SCCB_write_reg(0x59, 0x88);         
+        resp = SCCB_write_reg(0x5a, 0x88);
+        resp = SCCB_write_reg(0x5b, 0x44);         
+        resp = SCCB_write_reg(0x5c, 0x67);
+        resp = SCCB_write_reg(0x5d, 0x49);         
+        resp = SCCB_write_reg(0x5e, 0x0e);
+        resp = SCCB_write_reg(0x6c, 0x0a);         
+        resp = SCCB_write_reg(0x6d, 0x55);
+        resp = SCCB_write_reg(0x6e, 0x11);         
+        resp = SCCB_write_reg(0x6f, 0x9f); 
+        resp = SCCB_write_reg(0x6a, 0x40);         
+        resp = SCCB_write_reg(0x01, 0x40);
+        resp = SCCB_write_reg(0x02, 0x60);
+        resp = SCCB_write_reg(0x13, COM8_FASTAEC|COM8_AECSTEP|COM8_BFILT|COM8_AGC|COM8_AEC|COM8_AWB);  
+/*
+// убрав этот блок стало менее ярко        
+        // Matrix coefficients 
+        resp = SCCB_write_reg(0x4f, 0x80);         
+        resp = SCCB_write_reg(0x50, 0x80);
+        resp = SCCB_write_reg(0x51, 0);            
+        resp = SCCB_write_reg(0x52, 0x22);
+        resp = SCCB_write_reg(0x53, 0x5e);         
+        resp = SCCB_write_reg(0x54, 0x80);
+        resp = SCCB_write_reg(0x58, 0x9e);
+        
+        resp = SCCB_write_reg(0x41, 0x08);   
+        resp = SCCB_write_reg(0x3f, 0);
+        resp = SCCB_write_reg(0x75, 0x05);         
+        resp = SCCB_write_reg(0x76, 0xe1);
+        resp = SCCB_write_reg(0x4c, 0);            
+        resp = SCCB_write_reg(0x77, 0x01);
+        resp = SCCB_write_reg(0x3d, 0xc3);    
+        resp = SCCB_write_reg(0x4b, 0x09);
+        resp = SCCB_write_reg(0xc9, 0x60);         
+        resp = SCCB_write_reg(0x41, 0x38);
+        resp = SCCB_write_reg(0x56, 0x40);
+        
+        resp = SCCB_write_reg(0x34, 0x11);         
+        resp = SCCB_write_reg(0x3b, COM11_EXP|COM11_HZAUTO);
+        resp = SCCB_write_reg(0xa4, 0x88);         
+        resp = SCCB_write_reg(0x96, 0);
+        resp = SCCB_write_reg(0x97, 0x30);         
+        resp = SCCB_write_reg(0x98, 0x20);
+        resp = SCCB_write_reg(0x99, 0x30);         
+        resp = SCCB_write_reg(0x9a, 0x84);
+        resp = SCCB_write_reg(0x9b, 0x29);         
+        resp = SCCB_write_reg(0x9c, 0x03);
+        resp = SCCB_write_reg(0x9d, 0x4c);         
+        resp = SCCB_write_reg(0x9e, 0x3f);
+        resp = SCCB_write_reg(0x78, 0x04);
+ //       
+        // Extra-weird stuff.  Some sort of multiplexor register 
+        resp = SCCB_write_reg(0x79, 0x01);         
+        resp = SCCB_write_reg(0xc8, 0xf0);
+        resp = SCCB_write_reg(0x79, 0x0f);         
+        resp = SCCB_write_reg(0xc8, 0x00);
+        resp = SCCB_write_reg(0x79, 0x10);         
+        resp = SCCB_write_reg(0xc8, 0x7e);
+        resp = SCCB_write_reg(0x79, 0x0a);         
+        resp = SCCB_write_reg(0xc8, 0x80);
+        resp = SCCB_write_reg(0x79, 0x0b);         
+        resp = SCCB_write_reg(0xc8, 0x01);
+        resp = SCCB_write_reg(0x79, 0x0c);         
+        resp = SCCB_write_reg(0xc8, 0x0f);
+        resp = SCCB_write_reg(0x79, 0x0d);         
+        resp = SCCB_write_reg(0xc8, 0x20);
+        resp = SCCB_write_reg(0x79, 0x09);         
+        resp = SCCB_write_reg(0xc8, 0x80);
+        resp = SCCB_write_reg(0x79, 0x02);         
+        resp = SCCB_write_reg(0xc8, 0xc0);
+        resp = SCCB_write_reg(0x79, 0x03);         
+        resp = SCCB_write_reg(0xc8, 0x40);
+        resp = SCCB_write_reg(0x79, 0x05);         
+        resp = SCCB_write_reg(0xc8, 0x30);
+        resp = SCCB_write_reg(0x79, 0x26);
+*/
+
+    resp = SCCB_write_reg(0xff, 0xff); /* END MARKER */    
+
+}
+
+
+
+
 #include "stm32h7xx_hal_dcmi.h"
 
-#define IMG_ROWS   					320
-#define IMG_COLUMNS   				240
+#define IMG_ROWS   					640
+#define IMG_COLUMNS   				480
 #define FRAME_BUF_PART_SIZE ( ( (IMG_ROWS * IMG_COLUMNS * 2) / 4) / 4 )
 __section (".bss") uint32_t __aligned(32) frame_buffer_1[FRAME_BUF_PART_SIZE] = {0};
 __section (".bss") uint32_t __aligned(32) frame_buffer_2[FRAME_BUF_PART_SIZE] = {0};
@@ -1132,7 +1193,7 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
             MX_USB_DEVICE_Stop();
 
             if (camera.pictureName[0] != 0 && camera.regAddr == 0 )
-            	ConfigCamera6();
+            	ConfigCamera8();
 
             HAL_Delay(100);
             
@@ -1142,7 +1203,7 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
             result = HAL_DCMI_MultiBufferStart_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, &new_frame_buffer, new_frame_buffer.size);
 	        result = HAL_DCMI_Stop(&hdcmi);
 	        if (camera.pictureName[0] != 0 )
-	        	SavePictureMB(camera.pictureName, &new_frame_buffer, 320 * 240 / 4/*IMG_ROWS * IMG_COLUMNS*/ );
+	        	SavePictureMB(camera.pictureName, &new_frame_buffer, IMG_ROWS * IMG_COLUMNS / 4/*IMG_ROWS * IMG_COLUMNS*/ );
 	        	//SavePicture(camera.pictureName, (uint16_t*) new_frame_buffer.pFrameBuf3, 320 * 240/*IMG_ROWS * IMG_COLUMNS*/ );
 
             MX_USB_DEVICE_Start();
