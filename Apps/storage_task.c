@@ -23,15 +23,17 @@ void StorageTask(void *argument)
 {
   FIL sdFile;
   FRESULT fr;
+  uint8_t str[] = "Hello!\n";
+  uint8_t res = 0;
 
-  MX_SDMMC2_SD_Init();
-	MX_FATFS_Init();
-	MX_USB_DEVICE_Init();
+  //MX_SDMMC2_SD_Init();
+	//MX_FATFS_Init();
+	//MX_USB_DEVICE_Init();
 
 
   // Open or create a log file and ready to append
   //fr = f_mkfs("", FM_ANY, 0, work, sizeof(work));
-  fr = f_mount(&sdFatFs, "", 1);
+  //fr = f_mount(&sdFatFs, "", 1);
 /*  do{
       //fr = open_append(&sdFile, "camconf.txt");
       fr = f_open(&sdFile, "camconf.txt", FA_READ);
@@ -44,6 +46,7 @@ void StorageTask(void *argument)
 */
   for(;;)
   {
+    //res = CDC_Transmit_FS(str, sizeof(str));
     osDelay(1000);
   }
 
