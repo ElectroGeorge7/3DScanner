@@ -136,7 +136,7 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *pbuf, uint32_t *Len, uint8_t epnum);
   * @}
   */
 
-USBD_CDC_ItfTypeDef USBD_Interface_fops_FS =
+const USBD_CDC_ItfTypeDef USBD_Interface_fops_FS =
 {
   CDC_Init_FS,
   CDC_DeInit_FS,
@@ -283,7 +283,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 {
   uint8_t result = USBD_OK;
   /* USER CODE BEGIN 7 */
-  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
+  USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassDataCDC;
   if (hcdc->TxState != 0){
     return USBD_BUSY;
   }

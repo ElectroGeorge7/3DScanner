@@ -54,14 +54,17 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/FATFS/App}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/Third_Party/FatFs/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/Third_Party/FatFs/src/option}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/ST/STM32_USB_Device_Library/Core/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/Third_Party/FreeRTOS/Source/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Apps}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/CDC_MSC/App}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/CDC/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/MSC/App}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/CDC_MSC/Target}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/CDC/Target}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/MSC/Target}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/USB_DEVICE/Core/Inc}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1743111586" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -92,8 +95,8 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FATFS"/>
-						<entry excluding="ST/STM32_USB_Device_Library/Class/MSC|ST/STM32_USB_Device_Library/Class/CDC_MSC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry excluding="CDC_MSC|MSC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
+						<entry excluding="MSC/Target|CDC/Target|MSC/App/usb_device.c|MSC/App/usbd_desc.c|CDC/App/usbd_desc.c|CDC/App/usb_device.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -172,7 +175,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FATFS"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry excluding="CDC/App/usb_device.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
