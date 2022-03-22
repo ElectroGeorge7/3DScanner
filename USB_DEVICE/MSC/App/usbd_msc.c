@@ -114,7 +114,9 @@ USBD_ClassTypeDef  USBD_MSC =
   NULL,
   NULL,
   USBD_MSC_GetFSCfgDesc,
-  USBD_MSC_GetDeviceQualifierDescriptor,
+  USBD_MSC_GetFSCfgDesc,
+  USBD_MSC_GetFSCfgDesc,
+  USBD_MSC_GetDeviceQualifierDescriptor
 };
 
 /* USB Mass storage device Configuration Descriptor */

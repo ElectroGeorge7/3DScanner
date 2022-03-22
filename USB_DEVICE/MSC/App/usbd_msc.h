@@ -104,6 +104,7 @@ typedef struct _USBD_MSC_BOT_HandleTypeDef
 }
 USBD_MSC_BOT_HandleTypeDef;
 
+
 /* Structure for MSC process */
 extern USBD_ClassTypeDef  USBD_MSC;
 #define USBD_MSC_CLASS    &USBD_MSC

@@ -517,12 +517,12 @@ void ControlTask(void *argument)
 	uint8_t str[] = "Hello!\n";
 	uint8_t res = 0;
 
-	MX_USB_DEVICE_Init();
+	//MX_USB_DEVICE_Init();
   for(;;)
   {
     //uart_terminal_print("Loop\n");
     //uart_terminal_cmd_def();
-	res = CDC_Transmit_FS(str, sizeof(str) - 1);
+	//res = CDC_Transmit_FS(str, sizeof(str) - 1);
     osDelay(1000);
   }
 

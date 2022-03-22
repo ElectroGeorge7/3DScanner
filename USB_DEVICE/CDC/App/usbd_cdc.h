@@ -41,29 +41,35 @@ extern "C" {
 /** @defgroup usbd_cdc_Exported_Defines
   * @{
   */
-#define CDC_IN_EP                                   0x81U  /* EP1 for data IN */
-#define CDC_OUT_EP                                  0x01U  /* EP1 for data OUT */
-#define CDC_CMD_EP                                  0x82U  /* EP2 for CDC commands */
+//#define CDC_IN_EP                                   0x81U  /* EP1 for data IN */
+//#define CDC_OUT_EP                                  0x01U  /* EP1 for data OUT */
+//#define CDC_CMD_EP                                  0x82U  /* EP2 for CDC commands */
+
+/*
 
 #ifndef CDC_HS_BINTERVAL
 #define CDC_HS_BINTERVAL                            0x10U
-#endif /* CDC_HS_BINTERVAL */
-
+#endif
+*/
 #ifndef CDC_FS_BINTERVAL
 #define CDC_FS_BINTERVAL                            0x10U
-#endif /* CDC_FS_BINTERVAL */
+#endif
+
 
 /* CDC Endpoints parameters: you can fine tune these values depending on the needed baudrates and performance. */
 #define CDC_DATA_HS_MAX_PACKET_SIZE                 512U  /* Endpoint IN & OUT Packet size */
 #define CDC_DATA_FS_MAX_PACKET_SIZE                 64U  /* Endpoint IN & OUT Packet size */
 #define CDC_CMD_PACKET_SIZE                         8U  /* Control Endpoint Packet size */
 
+
 #define USB_CDC_CONFIG_DESC_SIZ                     67U
+/*
 #define CDC_DATA_HS_IN_PACKET_SIZE                  CDC_DATA_HS_MAX_PACKET_SIZE
 #define CDC_DATA_HS_OUT_PACKET_SIZE                 CDC_DATA_HS_MAX_PACKET_SIZE
-
+*/
 #define CDC_DATA_FS_IN_PACKET_SIZE                  CDC_DATA_FS_MAX_PACKET_SIZE
 #define CDC_DATA_FS_OUT_PACKET_SIZE                 CDC_DATA_FS_MAX_PACKET_SIZE
+
 
 /*---------------------------------------------------------------------*/
 /*  CDC definitions                                                    */
@@ -110,7 +116,7 @@ typedef struct _USBD_CDC_Itf
 
 typedef struct _USBD_CDC_HandleTypeDef
 {
-  uint32_t data[CDC_DATA_HS_MAX_PACKET_SIZE / 4U];      /* Force 32bits alignment */
+  uint32_t data[CDC_DATA_FS_MAX_PACKET_SIZE / 4U];      /* Force 32bits alignment */
   uint8_t  CmdOpCode;
   uint8_t  CmdLength;
   uint8_t  *RxBuffer;

@@ -148,6 +148,8 @@ USBD_ClassTypeDef  USBD_CDC =
   NULL,
   NULL,
   USBD_CDC_GetFSCfgDesc,
+  USBD_CDC_GetFSCfgDesc,
+  USBD_CDC_GetFSCfgDesc,
   USBD_CDC_GetDeviceQualifierDescriptor,
 };
 
@@ -276,7 +278,7 @@ __ALIGN_BEGIN static uint8_t USBD_CDC_CfgFSDesc[USB_CDC_CONFIG_DESC_SIZ] __ALIGN
   }
 
   pdev->pClassDataCDC = (void *)hcdc;
-
+  hcdc = pdev->pClassDataCDC;
 
   /* Open EP IN */
   (void)USBD_LL_OpenEP(pdev, CDC_IN_EP, USBD_EP_TYPE_BULK,
@@ -658,18 +660,9 @@ uint8_t USBD_CDC_ReceivePacket(USBD_HandleTypeDef *pdev)
     return (uint8_t)USBD_FAIL;
   }
 
-  if (pdev->dev_speed == USBD_SPEED_HIGH)
-  {
-    /* Prepare Out endpoint to receive next packet */
-    (void)USBD_LL_PrepareReceive(pdev, CDC_OUT_EP, hcdc->RxBuffer,
-                                 CDC_DATA_HS_OUT_PACKET_SIZE);
-  }
-  else
-  {
     /* Prepare Out endpoint to receive next packet */
     (void)USBD_LL_PrepareReceive(pdev, CDC_OUT_EP, hcdc->RxBuffer,
                                  CDC_DATA_FS_OUT_PACKET_SIZE);
-  }
 
   return (uint8_t)USBD_OK;
 }

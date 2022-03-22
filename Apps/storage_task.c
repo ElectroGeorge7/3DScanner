@@ -26,9 +26,9 @@ void StorageTask(void *argument)
   uint8_t str[] = "Hello!\n";
   uint8_t res = 0;
 
-  //MX_SDMMC2_SD_Init();
-	//MX_FATFS_Init();
-	//MX_USB_DEVICE_Init();
+  MX_SDMMC2_SD_Init();
+  MX_FATFS_Init();
+  MX_USB_DEVICE_Init();
 
 
   // Open or create a log file and ready to append
@@ -46,7 +46,7 @@ void StorageTask(void *argument)
 */
   for(;;)
   {
-    //res = CDC_Transmit_FS(str, sizeof(str));
+    res = CDC_Transmit_FS(str, sizeof(str));
     osDelay(1000);
   }
 
