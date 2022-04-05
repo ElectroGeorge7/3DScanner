@@ -26,6 +26,7 @@
 #include "storage_task.h"
 
 #include "string.h"
+#include "usb_device.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -111,7 +112,7 @@ int main(void)
     HAL_GPIO_WritePin(CAM_En_GPIO_Port, CAM_En_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOA, CAM_Pwdn_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOA, CAM_Reset_Pin, GPIO_PIN_SET);
-
+*/
     // Включение тактирования
     HAL_RCC_MCOConfig(RCC_MCO2, RCC_MCO2SOURCE_HSE, RCC_MCODIV_1);
     //HAL_Delay(1000);
@@ -517,15 +518,20 @@ static void MX_I2C2_Init(void)
   */
 void ControlTask(void *argument)
 {
-  MX_I2C2_Init();
-  MX_UART4_Init();
-  uart_terminal_init(&huart4);
-  uart_terminal_print("Control task start!\n");
+  //MX_I2C2_Init();
+  //MX_UART4_Init();
+  //uart_terminal_init(&huart4);
+  //uart_terminal_print("Control task start!\n");
+	uint8_t str[] = "Hello!\n";
+	uint8_t res = 0;
+
+	//MX_USB_DEVICE_Init();
   for(;;)
   {
     //uart_terminal_print("Loop\n");
-    uart_terminal_cmd_def();
-    osDelay(100);
+    //uart_terminal_cmd_def();
+	//res = CDC_Transmit_FS(str, sizeof(str) - 1);
+    osDelay(1000);
   }
 
 }

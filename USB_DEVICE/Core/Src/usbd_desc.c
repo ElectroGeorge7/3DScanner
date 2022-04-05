@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -63,13 +63,14 @@
   * @{
   */
 
-#define USBD_VID     1155
-#define USBD_LANGID_STRING     1033
-#define USBD_MANUFACTURER_STRING     "STMicroelectronics"
-#define USBD_PID_FS     22314
-#define USBD_PRODUCT_STRING_FS     "STM32 Mass Storage"
-#define USBD_CONFIGURATION_STRING_FS     "MSC Config"
-#define USBD_INTERFACE_STRING_FS     "MSC Interface"
+#define USBD_VID                        0x0483
+#define USBD_PID                        0x5741
+#define USBD_LANGID_STRING              0x409
+#define USBD_MANUFACTURER_STRING        "STMicroelectronics"
+#define USBD_PRODUCT_STRING_FS          "Composite MSC CDC"
+#define USBD_SERIALNUMBER_STRING_FS     "000000000555"
+#define USBD_CONFIGURATION_STRING_FS    "VCP Config"
+#define USBD_INTERFACE_STRING_FS        "VCP Interface"
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 
@@ -145,27 +146,28 @@ USBD_DescriptorsTypeDef FS_Desc =
   #pragma data_alignment=4
 #endif /* defined ( __ICCARM__ ) */
 /** USB standard device descriptor. */
-__ALIGN_BEGIN uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
+__ALIGN_BEGIN const uint8_t USBD_FS_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END =
 {
-  0x12,                       /*bLength */
-  USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
-  0x00,                       /*bcdUSB */
-  0x02,
-  0x00,                       /*bDeviceClass*/
-  0x00,                       /*bDeviceSubClass*/
-  0x00,                       /*bDeviceProtocol*/
-  USB_MAX_EP0_SIZE,           /*bMaxPacketSize*/
-  LOBYTE(USBD_VID),           /*idVendor*/
-  HIBYTE(USBD_VID),           /*idVendor*/
-  LOBYTE(USBD_PID_FS),        /*idProduct*/
-  HIBYTE(USBD_PID_FS),        /*idProduct*/
-  0x00,                       /*bcdDevice rel. 2.00*/
-  0x02,
-  USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
-  USBD_IDX_PRODUCT_STR,       /*Index of product string*/
-  USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
-  USBD_MAX_NUM_CONFIGURATION  /*bNumConfigurations*/
+       	0x12,                       /*bLength */
+       	USB_DESC_TYPE_DEVICE,       /*bDescriptorType*/
+       	0x00,                       /*bcdUSB */
+       	0x02,
+       	0xEF,                       /*bDeviceClass*/
+       	0x02,                       /*bDeviceSubClass*/
+       	0x01,                       /*bDeviceProtocol*/
+       	USB_MAX_EP0_SIZE,      /*bMaxPacketSize*/
+       	LOBYTE(USBD_VID),           /*idVendor*/
+       	HIBYTE(USBD_VID),           /*idVendor*/
+       	LOBYTE(USBD_PID),           /*idVendor*/
+       	HIBYTE(USBD_PID),           /*idVendor*/
+       	0x00,                       /*bcdDevice rel. 2.00*/
+       	0x02,
+       	USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
+       	USBD_IDX_PRODUCT_STR,       /*Index of product string*/
+       	USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
+       	USBD_MAX_NUM_CONFIGURATION  /*bNumConfigurations*/
 };
+
 
 /* USB_DeviceDescriptor */
 
@@ -248,14 +250,8 @@ uint8_t * USBD_FS_LangIDStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
   */
 uint8_t * USBD_FS_ProductStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
-  if(speed == 0)
-  {
-    USBD_GetString((uint8_t *)USBD_PRODUCT_STRING_FS, USBD_StrDesc, length);
-  }
-  else
-  {
-    USBD_GetString((uint8_t *)USBD_PRODUCT_STRING_FS, USBD_StrDesc, length);
-  }
+  UNUSED(speed);
+  USBD_GetString((uint8_t *)USBD_PRODUCT_STRING_FS, USBD_StrDesc, length);
   return USBD_StrDesc;
 }
 
@@ -285,11 +281,11 @@ uint8_t * USBD_FS_SerialStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 
   /* Update the serial number string descriptor with the data from the unique
    * ID */
-  Get_SerialNum();
-  /* USER CODE BEGIN USBD_FS_SerialStrDescriptor */
-
-  /* USER CODE END USBD_FS_SerialStrDescriptor */
-  return (uint8_t *) USBD_StringSerial;
+  // Get_SerialNum();
+  UNUSED(speed);
+  USBD_GetString ((uint8_t *)USBD_SERIALNUMBER_STRING_FS, USBD_StrDesc, length);
+  //return (uint8_t *) USBD_StringSerial;
+  return USBD_StrDesc;
 }
 
 /**
@@ -300,14 +296,8 @@ uint8_t * USBD_FS_SerialStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
   */
 uint8_t * USBD_FS_ConfigStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
-  if(speed == USBD_SPEED_HIGH)
-  {
-    USBD_GetString((uint8_t *)USBD_CONFIGURATION_STRING_FS, USBD_StrDesc, length);
-  }
-  else
-  {
-    USBD_GetString((uint8_t *)USBD_CONFIGURATION_STRING_FS, USBD_StrDesc, length);
-  }
+  UNUSED(speed);
+  USBD_GetString((uint8_t *)USBD_CONFIGURATION_STRING_FS, USBD_StrDesc, length);
   return USBD_StrDesc;
 }
 
@@ -319,14 +309,8 @@ uint8_t * USBD_FS_ConfigStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
   */
 uint8_t * USBD_FS_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
 {
-  if(speed == 0)
-  {
-    USBD_GetString((uint8_t *)USBD_INTERFACE_STRING_FS, USBD_StrDesc, length);
-  }
-  else
-  {
-    USBD_GetString((uint8_t *)USBD_INTERFACE_STRING_FS, USBD_StrDesc, length);
-  }
+  UNUSED(speed);
+  USBD_GetString((uint8_t *)USBD_INTERFACE_STRING_FS, USBD_StrDesc, length);
   return USBD_StrDesc;
 }
 
