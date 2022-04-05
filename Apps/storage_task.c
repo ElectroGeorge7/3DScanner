@@ -33,7 +33,7 @@ void StorageTask(void *argument)
 
   // Open or create a log file and ready to append
   //fr = f_mkfs("", FM_ANY, 0, work, sizeof(work));
-  //fr = f_mount(&sdFatFs, "", 1);
+  fr = f_mount(&sdFatFs, "", 1);
 /*  do{
       //fr = open_append(&sdFile, "camconf.txt");
       fr = f_open(&sdFile, "camconf.txt", FA_READ);
