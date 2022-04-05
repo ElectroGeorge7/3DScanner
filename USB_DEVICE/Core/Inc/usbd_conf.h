@@ -89,7 +89,7 @@
  #define MSC_INTERFACE_IDX 0x0			// Index of MSC interface
  #define CDC_INTERFACE_IDX 0x1			// Index of CDC interface
 
- // endpoints numbers
+ // endpoints numbers, related to PCD fifo number (№ep=№fifo) in usbd_conf.c
  #define MSC_EP_IDX                      0x01
  #define CDC_CMD_EP_IDX                  0x02
  #define CDC_EP_IDX                      0x03

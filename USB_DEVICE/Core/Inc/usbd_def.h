@@ -31,6 +31,7 @@ extern "C" {
 /** @addtogroup STM32_USBD_DEVICE_LIBRARY
   * @{
   */
+#include "stm32h7xx_hal.h"
 
 /** @defgroup USB_DEF
   * @brief general defines for the usb device library file
@@ -266,18 +267,17 @@ typedef struct
 
 //Forward declaration
 
-typedef PCD_HandleTypeDef PCD_HandleTypeDef;
+//typedef PCD_HandleTypeDef PCD_HandleTypeDef;
+
 struct _USBD_CDC_HandleTypeDef;
 typedef struct _USBD_CDC_HandleTypeDef USBD_CDC_HandleTypeDef;
 typedef struct _USBD_CDC_Itf USBD_CDC_ItfTypeDef;
+
 struct _USBD_MSC_BOT_HandleTypeDef;
 typedef struct _USBD_MSC_BOT_HandleTypeDef USBD_MSC_BOT_HandleTypeDef;
 struct _USBD_STORAGE;
 typedef struct _USBD_STORAGE USBD_StorageTypeDef;
-/*
-#include	"usbd_msc.h"
-#include	"usbd_msc.h"
-*/
+
 
 /* USB Device handle structure */
 typedef struct _USBD_HandleTypeDef
