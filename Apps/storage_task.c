@@ -68,7 +68,7 @@ void fRead(char *configFileName, uint8_t *buf, uint32_t num, uint32_t *br){
   f_close(&readFile);
 }
 
-#define WRITE_BUFE_SIZE 200//20
+#define WRITE_BUFE_SIZE 400//20
 UINT bw = 0;
 uint8_t rgbBuf[WRITE_BUFE_SIZE*3] = {0};
 void SavePicture(char *pictureName, uint16_t *buf, uint32_t num){
@@ -151,17 +151,17 @@ void SavePictureMB(char *pictureName, sFrameBuf_t *frameBuf, uint32_t num){
   temp = (uint16_t *)(frameBuf->pFrameBuf1);
   do{
 	for (uint32_t j = 0; j < WRITE_BUFE_SIZE*3; j+=3, counter++){
-		  rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
-		  gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
-		  gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
-		  bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
-		  rgbBuf[j] = (uint8_t) ( rVal5 );		// red
-		  rgbBuf[j+1]= (uint8_t) ( gVal6 );	// green
-		  rgbBuf[j+2]= (uint8_t) ( bVal5 );		// blue
+		  //rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
+		  //gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
+		  //gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
+		  //bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
+		  rgbBuf[j] = (uint8_t) ( (temp[counter] & 0b11111000) );	// red
+		  rgbBuf[j+1] = (uint8_t) (  ( (temp[counter] & 0b1110000000000000) >> 11 ) | ( (temp[counter] & 0b111) << 5 ) );	// green
+		  rgbBuf[j+2] = (uint8_t) ( (temp[counter] & 0b1111100000000) >> 5 );	// blue
 	}
     fr = f_write(&writeFile, pBuf, WRITE_BUFE_SIZE*3, &bw);
     fr = f_sync(&writeFile);
-    memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
+    //memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
   }while( counter < num);
 
   temp = (uint16_t *)(frameBuf->pFrameBuf2);
@@ -169,17 +169,17 @@ void SavePictureMB(char *pictureName, sFrameBuf_t *frameBuf, uint32_t num){
 
   do{
 	for (uint32_t j = 0; j < WRITE_BUFE_SIZE*3; j+=3, counter++){
-		  rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
-		  gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
-		  gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
-		  bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
-		  rgbBuf[j] = (uint8_t) ( rVal5 );		// red
-		  rgbBuf[j+1]= (uint8_t) ( gVal6 );	// green
-		  rgbBuf[j+2]= (uint8_t) ( bVal5 );		// blue
+		  //rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
+		  //gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
+		  //gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
+		  //bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
+		  rgbBuf[j] = (uint8_t) ( (temp[counter] & 0b11111000) );	// red
+		  rgbBuf[j+1] = (uint8_t) (  ( (temp[counter] & 0b1110000000000000) >> 11 ) | ( (temp[counter] & 0b111) << 5 ) );	// green
+		  rgbBuf[j+2] = (uint8_t) ( (temp[counter] & 0b1111100000000) >> 5 );	// blue
 	}
     fr = f_write(&writeFile, pBuf, WRITE_BUFE_SIZE*3, &bw);
     fr = f_sync(&writeFile);
-    memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
+    //memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
   }while( counter < num);
 
   temp = (uint16_t *)(frameBuf->pFrameBuf3);
@@ -187,17 +187,17 @@ void SavePictureMB(char *pictureName, sFrameBuf_t *frameBuf, uint32_t num){
 
   do{
 	for (uint32_t j = 0; j < WRITE_BUFE_SIZE*3; j+=3, counter++){
-		  rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
-		  gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
-		  gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
-		  bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
-		  rgbBuf[j] = (uint8_t) ( rVal5 );		// red
-		  rgbBuf[j+1]= (uint8_t) ( gVal6 );	// green
-		  rgbBuf[j+2]= (uint8_t) ( bVal5 );		// blue
+		  //rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
+		  //gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
+		  //gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
+		  //bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
+		  rgbBuf[j] = (uint8_t) ( (temp[counter] & 0b11111000) );	// red
+		  rgbBuf[j+1]= (uint8_t) (  ( (temp[counter] & 0b1110000000000000) >> 11 ) | ( (temp[counter] & 0b111) << 5 ) );	// green
+		  rgbBuf[j+2]= (uint8_t) ( (temp[counter] & 0b1111100000000) >> 5 );	// blue
 	}
     fr = f_write(&writeFile, pBuf, WRITE_BUFE_SIZE*3, &bw);
     fr = f_sync(&writeFile);
-    memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
+    //memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
   }while( counter < num);
 
 
@@ -206,17 +206,17 @@ void SavePictureMB(char *pictureName, sFrameBuf_t *frameBuf, uint32_t num){
 
   do{
 	for (uint32_t j = 0; j < WRITE_BUFE_SIZE*3; j+=3, counter++){
-		  rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
-		  gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
-		  gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
-		  bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
-		  rgbBuf[j] = (uint8_t) ( rVal5 );		// red
-		  rgbBuf[j+1]= (uint8_t) ( gVal6 );	// green
-		  rgbBuf[j+2]= (uint8_t) ( bVal5 );		// blue
+		  //rVal5=(uint8_t)( (temp[counter] & 0b11111000) );
+		  //gVal6=(uint8_t)( (temp[counter] & 0b1110000000000000) >> 11 ); // младшие разряды
+		  //gVal6 |= (uint8_t)( (temp[counter] & 0b111) << 5 );            // старшие разряды
+		  //bVal5=(uint8_t)( (temp[counter] & 0b1111100000000) >> 5 );
+		  rgbBuf[j] = (uint8_t) ( (temp[counter] & 0b11111000) );	// red
+		  rgbBuf[j+1]= (uint8_t) (  ( (temp[counter] & 0b1110000000000000) >> 11 ) | ( (temp[counter] & 0b111) << 5 ) );	// green
+		  rgbBuf[j+2]= (uint8_t) ( (temp[counter] & 0b1111100000000) >> 5 );	// blue
 	}
     fr = f_write(&writeFile, pBuf, WRITE_BUFE_SIZE*3, &bw);
     fr = f_sync(&writeFile);
-    memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
+    //memset(rgbBuf, 0 , WRITE_BUFE_SIZE*3);
   }while( counter < num);
 
   // Close the file
