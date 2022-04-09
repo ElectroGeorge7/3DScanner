@@ -12,7 +12,8 @@
 #include "string.h"
 
 #include "stm32h7xx_hal.h"
-#include "modules.h"
+
+#include "../Modules/modules.h"
 
 #define UART_STR_PRINT_TIMEOUT     0xfff
 #define UART_CMD_SCAN_TIMEOUT      0xff

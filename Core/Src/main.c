@@ -21,12 +21,13 @@
 #include <stdio.h>
 
 #include "cmsis_os.h"
-#include "modules.h"
-
 #include "storage_task.h"
 
 #include "string.h"
 #include "usb_device.h"
+#include "../../Modules/modules.h"
+#include "../../Tasks/storage_task.h"
+#include "../../Terminal/uart_terminal.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."

@@ -5,7 +5,8 @@
  *      Author: George
  */
 
-#include "storage_task.h"
+#include "../Tasks/storage_task.h"
+
 #include "stm32h7xx_hal.h"
 
 #include "usb_device.h"
@@ -23,7 +24,7 @@ void StorageTask(void *argument)
 {
   FIL sdFile;
   FRESULT fr;
-  uint8_t str[] = "Hello!\n";
+  uint8_t str[] = "Hello!\n\r";
   uint8_t res = 0;
 
   MX_SDMMC2_SD_Init();
@@ -120,7 +121,7 @@ void SavePicture(char *pictureName, uint16_t *buf, uint32_t num){
 
 }
 
-#include "modules.h"
+#include "../Modules/modules.h"
 void SavePictureMB(char *pictureName, sFrameBuf_t *frameBuf, uint32_t num){
   FIL writeFile;
   FRESULT fr;

@@ -6,7 +6,8 @@
  * @brief Structures of 3D scanner`s modules.
  */
 
-#include "modules.h"
+#include "../Modules/modules.h"
+
 #include "string.h"
 #include "stdlib.h"
 
@@ -14,10 +15,9 @@
 #include "stm32h7xx_hal.h"
 #include "usb_device.h"
 
-#include "storage_task.h"
-
-#include "camera.h"
-#include "ov7670reg.h"
+#include "../Modules/Cam_OV7670/camera.h"
+#include "../Modules/Cam_OV7670/ov7670reg.h"
+#include "../Tasks/storage_task.h"
 
 struct sLaser_t laser = {
     "laser",
@@ -819,7 +819,7 @@ void ConfigCamera8(void){
         resp = SCCB_write_reg(0x01, 0x40);
         resp = SCCB_write_reg(0x02, 0x60);
         resp = SCCB_write_reg(0x13, COM8_FASTAEC|COM8_AECSTEP|COM8_BFILT|COM8_AGC|COM8_AEC|COM8_AWB);  
-/*
+/**/
 // убрав этот блок стало менее ярко        
         // Matrix coefficients 
         resp = SCCB_write_reg(0x4f, 0x80);         
@@ -855,7 +855,7 @@ void ConfigCamera8(void){
         resp = SCCB_write_reg(0x9d, 0x4c);         
         resp = SCCB_write_reg(0x9e, 0x3f);
         resp = SCCB_write_reg(0x78, 0x04);
- //       
+ /*
         // Extra-weird stuff.  Some sort of multiplexor register 
         resp = SCCB_write_reg(0x79, 0x01);         
         resp = SCCB_write_reg(0xc8, 0xf0);

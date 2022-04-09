@@ -6,7 +6,7 @@
  * @brief Communication control with terminal by uart interface.
  */
 
-#include "uart_terminal.h"
+#include "../Terminal/uart_terminal.h"
 
 static UART_HandleTypeDef *ghuart;
 static uint8_t UartTermRxBuf[MAX_TERM_CMD_SIZE] = {0,};

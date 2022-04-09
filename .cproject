@@ -62,6 +62,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/FatFs/Src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/FatFs/Src/option}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/FatFs/Target}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Tasks}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Cam_OV7670}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Terminal}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1743111586" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -88,11 +92,13 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Apps"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FatFs"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FreeRTOS"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Modules"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Tasks"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Terminal"/>
 						<entry excluding="CDC/App/usbd_desc.c|CDC/App/usb_device.c|CDC/Target|MSC/App/usbd_desc.c|MSC/App/usb_device.c|MSC/Target" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 					</sourceEntries>
 				</configuration>
@@ -167,9 +173,9 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Apps"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Tasks"/>
 						<entry excluding="CDC/App/usb_device.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 					</sourceEntries>
 				</configuration>

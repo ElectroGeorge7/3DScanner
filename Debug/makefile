@@ -12,6 +12,10 @@ RM := rm -rf
 -include USB_DEVICE/Core/Src/subdir.mk
 -include USB_DEVICE/CDC_MSC/subdir.mk
 -include USB_DEVICE/CDC/subdir.mk
+-include Terminal/subdir.mk
+-include Tasks/subdir.mk
+-include Modules/Cam_OV7670/subdir.mk
+-include Modules/subdir.mk
 -include FreeRTOS/Source/portable/MemMang/subdir.mk
 -include FreeRTOS/Source/portable/GCC/ARM_CM4F/subdir.mk
 -include FreeRTOS/Source/CMSIS_RTOS_V2/subdir.mk
@@ -24,7 +28,6 @@ RM := rm -rf
 -include Drivers/CMSIS/Device/ST/STM32H7xx/Source/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
--include Apps/subdir.mk
 -include subdir.mk
 -include objects.mk
 
