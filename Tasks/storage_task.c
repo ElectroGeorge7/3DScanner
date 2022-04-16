@@ -19,11 +19,11 @@ static FATFS sdFatFs;
 
 //BYTE readBuf[50] = {0};
 //UINT br = 0;
-
+FRESULT fr;
 void StorageTask(void *argument)
 {
   FIL sdFile;
-  FRESULT fr;
+  //FRESULT fr;
   uint8_t str[] = "Hello!\n\r";
   uint8_t res = 0;
 
@@ -122,6 +122,7 @@ void SavePicture(char *pictureName, uint16_t *buf, uint32_t num){
 }
 
 #include "../Modules/modules.h"
+#include "camera.h"
 void SavePictureMB(char *pictureName, sFrameBuf_t *frameBuf, uint32_t num){
   FIL writeFile;
   FRESULT fr;

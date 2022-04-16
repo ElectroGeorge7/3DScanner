@@ -163,14 +163,6 @@ typedef HAL_StatusTypeDef (*module_cmd_define_cb_t)(uint8_t *cmdStr);
 module_cmd_define_cb_t module_cmd_define_cbs[MODULES_NUMBER];
 
 
-typedef struct sFrameBuf{
-	uint32_t *pFrameBuf1;
-	uint32_t *pFrameBuf2;
-	uint32_t *pFrameBuf3;
-    uint32_t *pFrameBuf4;
-    uint32_t size;
-} sFrameBuf_t;
-
 // struct psModules_t {
 //     //uint32_t *pRef;
 //     struct sLaser_t *psLaser;

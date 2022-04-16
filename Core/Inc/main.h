@@ -30,30 +30,8 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal.h"
 
-
-//void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-
-
-/* Private defines -----------------------------------------------------------*/
-#define CAM_En_Pin GPIO_PIN_2
-#define CAM_En_GPIO_Port GPIOC
-#define CAM_Reset_Pin GPIO_PIN_2
-#define CAM_Reset_GPIO_Port GPIOA
-#define CAM_Pwdn_Pin GPIO_PIN_3
-#define CAM_Pwdn_GPIO_Port GPIOA
-
-#define DRV_Dir_Pin GPIO_PIN_5
-#define DRV_Dir_GPIO_Port GPIOA
-#define DRV_Step_Pin GPIO_PIN_7
-#define DRV_Step_GPIO_Port GPIOA
-#define DRV_Reset_Pin GPIO_PIN_5
-#define DRV_Reset_GPIO_Port GPIOC
-
-#define Detect_SDIO_Pin GPIO_PIN_0
-#define Detect_SDIO_GPIO_Port GPIOB
 
 
 #ifdef __cplusplus

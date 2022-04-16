@@ -66,6 +66,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Cam_OV7670}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Terminal}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Laser}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1743111586" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
