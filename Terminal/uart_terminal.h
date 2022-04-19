@@ -9,7 +9,10 @@
 #ifndef UART_TERMINAL_H
 #define UART_TERMINAL_H
 
-#include "string.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdarg.h>
 
 #include "stm32h7xx_hal.h"
 
@@ -38,6 +41,11 @@ HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len);
 
 /// @brief Define and add to the queue the command from terminal received by uart
 HAL_StatusTypeDef uart_terminal_cmd_def(void);
+
+
+void uartconsole_printf(const char* fmt, ...);
+#define uartprintf(...) uartconsole_printf(__VA_ARGS__)
+
 //------------------------------------------------------------------------------------------------------------------//
 
 //--------------------------------------------------- Private functions --------------------------------------------//

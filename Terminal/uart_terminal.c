@@ -7,6 +7,7 @@
  */
 
 #include "../Terminal/uart_terminal.h"
+#include "stm32h7xx_hal.h"
 
 static UART_HandleTypeDef *ghuart;
 static uint8_t UartTermRxBuf[MAX_TERM_CMD_SIZE] = {0,};
@@ -136,6 +137,28 @@ uint8_t * uart_terminal_scanf(void){
 	}
 	// создать сообщение об ошибке, и затем показать её в реестре ошибок.
 	return NULL;
+}
+
+
+
+__section (".ram_d3") static char __aligned(32) uartprintbuf[256 + 2] = {'\0'};
+
+void uartconsole_printf(const char* fmt, ...){
+    //char printbuf[128 + 2] = {0};
+    va_list args;
+    size_t size = 0;
+    va_start(args, fmt);
+    int ret = vsnprintf(uartprintbuf, sizeof(uartprintbuf) - 2, fmt, args);
+    va_end(args);
+    if(ret < 0){
+        return;
+    }
+    size += ret;
+    uartprintbuf[size] = '\n';
+    uartprintbuf[size + 1] = '\0';
+
+    uart_terminal_print(uartprintbuf);
+
 }
 
 //------------------------------------------------------------------------------------------------------------------//

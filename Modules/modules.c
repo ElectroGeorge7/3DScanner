@@ -18,7 +18,6 @@
 #include "../Modules/Laser/laser.h"
 
 #include "../Modules/Cam_OV7670/camera.h"
-#include "../Modules/Cam_OV7670/ov7670reg.h"
 #include "../Modules/Cam_OV7670/camera_hw_i2c.h"
 
 #include "../Tasks/storage_task.h"
@@ -362,7 +361,7 @@ HAL_StatusTypeDef camera_cmd_define_cb(uint8_t *cmdStr){
         return HAL_OK;
     }
     return HAL_ERROR;
-}
+};
 
 
 

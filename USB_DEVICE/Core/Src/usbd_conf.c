@@ -38,7 +38,7 @@
 
 /* USER CODE END PV */
 
-PCD_HandleTypeDef hpcd_USB_OTG_FS;
+__section (".ram_d3") PCD_HandleTypeDef __aligned(32) hpcd_USB_OTG_FS;
 void Error_Handler(void);
 
 /* External functions --------------------------------------------------------*/

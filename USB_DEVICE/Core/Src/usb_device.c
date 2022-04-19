@@ -46,7 +46,7 @@
 /* USER CODE END PFP */
 
 /* USB Device Core handle declaration. */
-USBD_HandleTypeDef hUsbDeviceFS;
+__section (".ram_d3") USBD_HandleTypeDef __aligned(32) hUsbDeviceFS;
 
 /*
  * -- Insert your variables declaration here --

@@ -152,7 +152,32 @@ static void MX_UART4_Init(void)
 
 }
 
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdarg.h>
 
+void usbconsole_printf(const char* fmt, ...);
+#define usbprintf(...) usbconsole_printf(__VA_ARGS__)
+
+__section (".ram_d3") static char __aligned(32) usbprintbuf[256 + 2] = {'\0'};
+
+void usbconsole_printf(const char* fmt, ...){
+    //char printbuf[128 + 2] = {0};
+    va_list args;
+    size_t size = 0;
+    va_start(args, fmt);
+    int ret = vsnprintf(usbprintbuf, sizeof(usbprintbuf) - 2, fmt, args);
+    va_end(args);
+    if(ret < 0){
+        return;
+    }
+    size += ret;
+    usbprintbuf[size] = '\n';
+    usbprintbuf[size + 1] = '\0';
+
+    CDC_Transmit_FS(usbprintbuf, strlen(usbprintbuf));
+}
 
 /**
   * @brief  Function implementing the controlTask thread.
@@ -162,19 +187,28 @@ static void MX_UART4_Init(void)
 void ControlTask(void *argument)
 {
   MX_UART4_Init();
+  MX_USB_DEVICE_Init();
   laser_init();
   //camera_init();
+
+  HAL_Delay(2000);
 
   uart_terminal_init(&huart4);
   uart_terminal_print("Control task start!\n");
 	uint8_t str[] = "Hello!\n";
 	uint8_t res = 0;
-
+	uartprintf("Hello, %s", str);
+	usbprintf("Hello, %s", str);
+	uartprintf("Hello, %d", 10);
+	usbprintf("Hello, %d", 10);
 	//MX_USB_DEVICE_Init();
   for(;;)
   {
     //uart_terminal_print("Loop\n");
     uart_terminal_cmd_def();
+    //res = CDC_Transmit_FS(str, sizeof(str));
+    usbprintf("Hello, %s", str);
+    usbprintf("Hello, %d", 10);
 	//res = CDC_Transmit_FS(str, sizeof(str) - 1);
     osDelay(1000);
   }

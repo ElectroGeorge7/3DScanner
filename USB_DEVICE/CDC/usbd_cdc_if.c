@@ -89,10 +89,10 @@
 /* Create buffer for reception and transmission           */
 /* It's up to user to redefine and/or remove those define */
 /** Received data over USB are stored in this buffer      */
-uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
+__section (".ram_d3") uint8_t __aligned(32) UserRxBufferFS[APP_RX_DATA_SIZE];
 
 /** Data to send over USB CDC are stored in this buffer   */
-uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
+__section (".ram_d3") uint8_t __aligned(32) UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
 
@@ -259,9 +259,63 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   * @param  Len: Number of data received (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
+
+#include <string.h>
+#include "../Modules/modules.h"
+#include "../Modules/Laser/laser.h"
+
+extern struct sLaser_t laser;
+
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
+    uint8_t i = 0;
+    char *cmdStr = Buf;
+    char *pParamStr = NULL;
+    char *pParamVal = NULL;
+    uint8_t paramValLen = 0;
+    char paramValStr[4] = {0};
+
+    if (cmdStr != NULL){
+
+        for ( i = 0; i < 2 ; i++){
+            if ( strstr(cmdStr, laser.power_func_names[i]) )
+                laser.powerState = (PowerState_t) i;
+        };
+
+        if ( pParamStr = strstr(cmdStr, laser.bright_param_name) ){
+            pParamVal = pParamStr + strlen(laser.bright_param_name);
+            paramValLen = 0;
+            while ( ( *(pParamVal+paramValLen) != 0x0D) && ( *(pParamVal+paramValLen) != ' ') && (paramValLen < 4 ) ){
+                paramValLen++;
+            };
+            memmove(paramValStr, pParamVal, paramValLen);
+            if ( paramValStr[0] == '0' )
+                laser.brightVal = 0;
+            else  {
+            	paramValStr[3] = '\0';
+                if ( atoi(paramValStr) )
+                    laser.brightVal = atoi(paramValStr);
+            }
+        }
+
+
+        if ( laser.powerState == EN ){
+        	laser_on();
+        	// после проверки убрать включение и отключение таймера из laser_set
+        	laser_set(laser.brightVal);
+        }
+        else{
+        	laser_off();
+        }
+        /// @todo создать сообщение для обработки команды
+
+        //return HAL_OK;
+    }
+
+	//return HAL_ERROR;
+
+
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);

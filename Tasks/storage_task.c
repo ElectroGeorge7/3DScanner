@@ -15,21 +15,22 @@
 SD_HandleTypeDef hsd2;
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
-static FATFS sdFatFs;
+__section (".ram_d3") static FATFS __aligned(32) sdFatFs;
+__section (".ram_d3") static FIL __aligned(32) sdFile;
+
 
 //BYTE readBuf[50] = {0};
 //UINT br = 0;
 FRESULT fr;
 void StorageTask(void *argument)
 {
-  FIL sdFile;
   //FRESULT fr;
   uint8_t str[] = "Hello!\n\r";
   uint8_t res = 0;
 
   MX_SDMMC2_SD_Init();
   MX_FATFS_Init();
-  MX_USB_DEVICE_Init();
+  //MX_USB_DEVICE_Init();
 
 
   // Open or create a log file and ready to append
@@ -47,7 +48,7 @@ void StorageTask(void *argument)
 */
   for(;;)
   {
-    res = CDC_Transmit_FS(str, sizeof(str));
+    //res = CDC_Transmit_FS(str, sizeof(str));
     osDelay(1000);
   }
 
@@ -71,7 +72,7 @@ void fRead(char *configFileName, uint8_t *buf, uint32_t num, uint32_t *br){
 
 #define WRITE_BUFE_SIZE 400//20
 UINT bw = 0;
-uint8_t rgbBuf[WRITE_BUFE_SIZE*3] = {0};
+__section (".ram_d3") uint8_t __aligned(32)rgbBuf[WRITE_BUFE_SIZE*3] = {0};
 void SavePicture(char *pictureName, uint16_t *buf, uint32_t num){
   FIL writeFile;
   FRESULT fr;
