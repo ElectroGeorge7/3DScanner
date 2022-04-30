@@ -12,6 +12,8 @@
 
 void StorageTask(void *argument);
 
+void storage_init(void);
+
 void fRead(char *configFileName, uint8_t *buf, uint32_t num, uint32_t *br);
 void SavePicture(char *pictureName, uint16_t *buf, uint32_t num);
 

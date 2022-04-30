@@ -31,6 +31,8 @@
 #include "usbd_msc.h"
 #include "usbd_storage_if.h"
 
+#include "terminal.h"
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -76,33 +78,40 @@ void MX_USB_DEVICE_Stop(void)
   * Init USB device Library, add supported class and start the library
   * @retval None
   */
-void MX_USB_DEVICE_Init(void)
+void usb_comp_dev_init(void)
 {
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
-
+	HAL_PWREx_EnableUSBVoltageDetector();
+	uartprintf("DEVICE_FS - check");
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
 
   /* Init Device Library, add supported class and start the library. */
   if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
   {
+	uartprintf("DEVICE_FS - ERROR");
     Error_Handler();
   }
+  uartprintf("DEVICE_FS - OK");
   if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_MSC_CDC_ClassDriver) != USBD_OK)
   {
     Error_Handler();
   }
+  uartprintf("USBD_MSC_CDC_ClassDriver - OK");
   if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) != USBD_OK)
   {
     Error_Handler();
   }
+  uartprintf("USBD_Interface_fops_FS - OK");
   if (USBD_MSC_RegisterStorage(&hUsbDeviceFS, &USBD_Storage_Interface_fops_FS) != USBD_OK)
   {
     Error_Handler();
   }
+  uartprintf("USBD_Storage_Interface_fops_FS - OK");
   if (USBD_Start(&hUsbDeviceFS) != USBD_OK)
   {
     Error_Handler();
   }
+  uartprintf("hUsbDeviceFS - OK");
 
   /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
   HAL_PWREx_EnableUSBVoltageDetector();

@@ -11,17 +11,6 @@
 #define CAM_Pwdn_Pin GPIO_PIN_3
 #define CAM_Pwdn_GPIO_Port GPIOA
 
-// todo: убрать в соответствующие модули
-#define DRV_Dir_Pin GPIO_PIN_5
-#define DRV_Dir_GPIO_Port GPIOA
-#define DRV_Step_Pin GPIO_PIN_7
-#define DRV_Step_GPIO_Port GPIOA
-#define DRV_Reset_Pin GPIO_PIN_5
-#define DRV_Reset_GPIO_Port GPIOC
-
-#define Detect_SDIO_Pin GPIO_PIN_0
-#define Detect_SDIO_GPIO_Port GPIOB
-
 
 static void MX_GPIO_Init(void);
 
@@ -82,12 +71,6 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, CAM_Reset_Pin|CAM_Pwdn_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, DRV_Dir_Pin|DRV_Step_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(DRV_Reset_GPIO_Port, DRV_Reset_Pin, GPIO_PIN_RESET);
-
   /*Configure GPIO pin : CAM_En_Pin */
   GPIO_InitStruct.Pin = CAM_En_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -101,25 +84,5 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : DRV_Dir_Pin DRV_Step_Pin */
-  GPIO_InitStruct.Pin = DRV_Dir_Pin|DRV_Step_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : DRV_Reset_Pin */
-  GPIO_InitStruct.Pin = DRV_Reset_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(DRV_Reset_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : Detect_SDIO_Pin PB2 */
-  GPIO_InitStruct.Pin = Detect_SDIO_Pin|GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }

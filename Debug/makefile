@@ -14,6 +14,7 @@ RM := rm -rf
 -include USB_DEVICE/CDC/subdir.mk
 -include Terminal/subdir.mk
 -include Tasks/subdir.mk
+-include Modules/Stepper_Motor/subdir.mk
 -include Modules/Laser/subdir.mk
 -include Modules/Cam_OV7670/subdir.mk
 -include Modules/subdir.mk

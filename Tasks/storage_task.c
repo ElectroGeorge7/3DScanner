@@ -5,37 +5,42 @@
  *      Author: George
  */
 
-#include "../Tasks/storage_task.h"
+#include "storage_task.h"
+
+#include "cmsis_os2.h"
+#include "modules.h"
+
+#include "camera.h"
+#include "usb_device.h"
 
 #include "stm32h7xx_hal.h"
 
-#include "usb_device.h"
-#include "bsp_driver_sd.h"
+#define Detect_SDIO_Pin GPIO_PIN_0
+#define Detect_SDIO_GPIO_Port GPIOB
 
 SD_HandleTypeDef hsd2;
-extern USBD_HandleTypeDef hUsbDeviceFS;
 
 __section (".ram_d3") static FATFS __aligned(32) sdFatFs;
 __section (".ram_d3") static FIL __aligned(32) sdFile;
 
+extern osMessageQueueId_t cameraQueueHandler;
+extern osEventFlagsId_t cameraEvtId;
 
 //BYTE readBuf[50] = {0};
 //UINT br = 0;
 FRESULT fr;
+DIR dp;
 void StorageTask(void *argument)
 {
   //FRESULT fr;
   uint8_t str[] = "Hello!\n\r";
-  uint8_t res = 0;
-
-  MX_SDMMC2_SD_Init();
-  MX_FATFS_Init();
-  //MX_USB_DEVICE_Init();
-
+  osStatus_t res = 0;
+  CameraQueueObj_t cameraMsg;
+  uint32_t flags;
 
   // Open or create a log file and ready to append
   //fr = f_mkfs("", FM_ANY, 0, work, sizeof(work));
-  fr = f_mount(&sdFatFs, "", 1);
+  //fr = f_mount(&sdFatFs, "", 1);
 /*  do{
       //fr = open_append(&sdFile, "camconf.txt");
       fr = f_open(&sdFile, "camconf.txt", FA_READ);
@@ -46,14 +51,42 @@ void StorageTask(void *argument)
   // Close the file
   f_close(&sdFile);
 */
+  storage_init();
+  fr = f_mkdir("ap");
+  fr = f_opendir(&dp, "/ap");
+
   for(;;)
   {
     //res = CDC_Transmit_FS(str, sizeof(str));
+    flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_FILE_CREATE, osFlagsWaitAny, osWaitForever);
+    switch(flags){
+    case CAMERA_EVT_FILE_CREATE:
+      res = osMessageQueueGet(cameraQueueHandler, &cameraMsg, 0, osWaitForever);
+      MX_USB_DEVICE_Stop();
+      SavePictureMB(cameraMsg.fileName, (sFrameBuf_t *)cameraMsg.frameBuf, (((sFrameBuf_t *)cameraMsg.frameBuf)->size) / 2);
+      MX_USB_DEVICE_Start();
+      break;
+    case CAMERA_EVT_DIR_CREATE:
+    	;
+      break;
+    default:
+    	;
+    }
+
     osDelay(1000);
   }
 
 }
 
+static void MX_DETECT_SDIO_GPIO_Init(void);
+
+void storage_init(void){
+	MX_DETECT_SDIO_GPIO_Init();
+	MX_SDMMC2_SD_Init();
+	MX_FATFS_Init();
+	HAL_Delay(1000);
+	fr = f_mount(&sdFatFs, "", 1);
+}
 
 void fRead(char *configFileName, uint8_t *buf, uint32_t num, uint32_t *br){
   FIL readFile;
@@ -245,6 +278,22 @@ static void MX_SDMMC2_SD_Init(void)
   hsd2.Init.TranceiverPresent = SDMMC_TRANSCEIVER_NOT_PRESENT;
 
 }
+
+
+static void MX_DETECT_SDIO_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pins : Detect_SDIO_Pin PB2 */
+  GPIO_InitStruct.Pin = Detect_SDIO_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(Detect_SDIO_GPIO_Port, &GPIO_InitStruct);
+}
+
 
 // Только для записи в конец файла
 FRESULT open_append (

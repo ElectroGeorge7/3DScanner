@@ -19,7 +19,7 @@ HAL_StatusTypeDef camera_off(void){
 	camera_hw_off();
 };
 
-HAL_StatusTypeDef camera_reg_config(uint8_t reg_addr, uint8_t data){
+HAL_StatusTypeDef camera_config_reg(uint8_t reg_addr, uint8_t data){
 	SCCB_write_reg(reg_addr, data);
 	return HAL_OK;
 };
@@ -52,6 +52,6 @@ HAL_StatusTypeDef camera_get_frame(struct sCamera_t *camera, sFrameBuf_t *frameB
     HAL_StatusTypeDef result;
     result = camera_hw_get_frame(frameBuf);
 
-    if (camera->pictureName[0] != 0 )
-    	SavePictureMB(camera->pictureName, frameBuf, (frameBuf->size) / 2);
+//    if (camera->pictureName[0] != 0 )
+//    	SavePictureMB(camera->pictureName, frameBuf, (frameBuf->size) / 2);
 }

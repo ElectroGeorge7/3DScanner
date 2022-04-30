@@ -9,14 +9,8 @@
 #ifndef UART_TERMINAL_H
 #define UART_TERMINAL_H
 
-#include <string.h>
-#include <stdio.h>
 #include <stdint.h>
-#include <stdarg.h>
-
 #include "stm32h7xx_hal.h"
-
-#include "../Modules/modules.h"
 
 #define UART_STR_PRINT_TIMEOUT     0xfff
 #define UART_CMD_SCAN_TIMEOUT      0xff
@@ -31,7 +25,7 @@
 
 //--------------------------------------------------- Public functions ---------------------------------------------//
 /// @brief Initialize uart handler in uart_terminal
-HAL_StatusTypeDef uart_terminal_init(UART_HandleTypeDef *huart);
+HAL_StatusTypeDef uart_terminal_init(void);
 
 /// @brief Print strings in terminal by uart transmit
 HAL_StatusTypeDef uart_terminal_print(uint8_t *string);
@@ -42,15 +36,6 @@ HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len);
 /// @brief Define and add to the queue the command from terminal received by uart
 HAL_StatusTypeDef uart_terminal_cmd_def(void);
 
-
-void uartconsole_printf(const char* fmt, ...);
-#define uartprintf(...) uartconsole_printf(__VA_ARGS__)
-
-//------------------------------------------------------------------------------------------------------------------//
-
-//--------------------------------------------------- Private functions --------------------------------------------//
-/// @brief Return the string from terminal received by uart
-uint8_t *uart_terminal_scanf(void);
 //------------------------------------------------------------------------------------------------------------------//
 
 #endif /* UART_TERMINAL_H */

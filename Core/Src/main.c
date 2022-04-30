@@ -20,26 +20,27 @@
 #include "main.h"
 #include <stdio.h>
 
-#include "cmsis_os.h"
-#include "storage_task.h"
+#include "cmsis_os2.h"
 
-#include "string.h"
+#include "stm32h7xx_sysclock.h"
+
+#include "terminal.h"
 #include "usb_device.h"
-#include "../../Modules/modules.h"
-#include "../../Tasks/storage_task.h"
-#include "../../Terminal/uart_terminal.h"
+
+#include "modules.h"
+
+#include "storage_task.h"
+#include "control_task.h"
+#include "modules_task.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-UART_HandleTypeDef huart4;
-
 osThreadId_t controlTaskHandle;
 const osThreadAttr_t controlTask_attributes = {
   .name = "controlTask",
-  //.priority = (osPriority_t) osPriorityNormal3,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityNormal3,
   .stack_size = 768 * 4
 };
 
@@ -53,17 +54,25 @@ const osThreadAttr_t modulesTask_attributes = {
 osThreadId_t storageTaskHandle;
 const osThreadAttr_t storageTask_attributes = {
   .name = "storageTask",
-  //.priority = (osPriority_t) osPriorityNormal,
-  .priority = (osPriority_t) osPriorityNormal3,
+  .priority = (osPriority_t) osPriorityNormal2,
   .stack_size = 768 * 4
 };
 
-void SystemClock_Config(void);
-static void MX_UART4_Init(void);
+#define CMD_QUEUE_OBJECTS 3
+#define CMD_QUEUE_OBJ_SIZE 256
+osMessageQueueId_t cmdQueueHandler;
+const osMessageQueueAttr_t cmdQueue = {
+	.name = "CmdQueue"
+};
 
-void ControlTask(void *argument);
-void ModulesTask(void *argument);
-//void StorageTask(void *argument);
+#define CAMERA_QUEUE_OBJECTS 1
+osMessageQueueId_t cameraQueueHandler;
+const osMessageQueueAttr_t cameraQueue = {
+	.name = "CamaraQueue"
+};
+
+osEventFlagsId_t cameraEvtId;                 // event flags id
+
 
 static void CPU_CACHE_Enable(void)
 {
@@ -76,16 +85,34 @@ static void CPU_CACHE_Enable(void)
 
 int main(void)
 {
-    CPU_CACHE_Enable();
+  CPU_CACHE_Enable();
 
-	HAL_Init();
-	/* Configure the system clock */
-	SystemClock_Config();
+  HAL_Init();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-	HAL_Delay(2U);
-	camera_init();
+  terminal_init();
+  uartprintf("UART terminal init");
+  //storage_init();
+  uartprintf("Storage init");
+  HAL_Delay(1000);
+  uartprintf("USB init start");
+  usb_comp_dev_init();
+  uartprintf("USB init finish");
+  // Нужно проверить, что COM порт настроился и только потом отправлять
+  //uartprintf("USB terminal init");
+  //usbprintf("UART terminal init");
+  //usbprintf("USB terminal init");
 
   osKernelInitialize();
+
+  cmdQueueHandler = osMessageQueueNew (CMD_QUEUE_OBJECTS, CMD_QUEUE_OBJ_SIZE, &cmdQueue);
+  cameraQueueHandler = osMessageQueueNew (CAMERA_QUEUE_OBJECTS, sizeof(CameraQueueObj_t) , &cameraQueue);
+
+  cameraEvtId = osEventFlagsNew(NULL);
+  if (cameraEvtId == NULL) {
+    usbprintf("Camera Event Flag object not created");
+  }
 
   controlTaskHandle = osThreadNew(ControlTask, NULL, &controlTask_attributes);
   modulesTaskHandle = osThreadNew(ModulesTask, NULL, &modulesTask_attributes);
@@ -93,137 +120,11 @@ int main(void)
 
   osKernelStart();
 
-    /* Loop forever */
-	while(1){
-    
-  }
+  /* Loop forever */
+  while(1){}
 }
 
 
-
-
-/**
-  * @brief UART4 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_UART4_Init(void)
-{
-
-  /* USER CODE BEGIN UART4_Init 0 */
-
-  /* USER CODE END UART4_Init 0 */
-
-  /* USER CODE BEGIN UART4_Init 1 */
-
-  /* USER CODE END UART4_Init 1 */
-  huart4.Instance = UART4;
-  huart4.Init.BaudRate = 115200;
-  huart4.Init.WordLength = UART_WORDLENGTH_8B;
-  huart4.Init.StopBits = UART_STOPBITS_1;
-  huart4.Init.Parity = UART_PARITY_NONE;
-  huart4.Init.Mode = UART_MODE_TX_RX;
-  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart4.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
-  huart4.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
-  huart4.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
-  if (HAL_UART_Init(&huart4) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart4, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart4, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart4) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN UART4_Init 2 */
-
-  /* USER CODE END UART4_Init 2 */
-
-}
-
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdarg.h>
-
-void usbconsole_printf(const char* fmt, ...);
-#define usbprintf(...) usbconsole_printf(__VA_ARGS__)
-
-__section (".ram_d3") static char __aligned(32) usbprintbuf[256 + 2] = {'\0'};
-
-void usbconsole_printf(const char* fmt, ...){
-    //char printbuf[128 + 2] = {0};
-    va_list args;
-    size_t size = 0;
-    va_start(args, fmt);
-    int ret = vsnprintf(usbprintbuf, sizeof(usbprintbuf) - 2, fmt, args);
-    va_end(args);
-    if(ret < 0){
-        return;
-    }
-    size += ret;
-    usbprintbuf[size] = '\n';
-    usbprintbuf[size + 1] = '\0';
-
-    CDC_Transmit_FS(usbprintbuf, strlen(usbprintbuf));
-}
-
-/**
-  * @brief  Function implementing the controlTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-void ControlTask(void *argument)
-{
-  MX_UART4_Init();
-  MX_USB_DEVICE_Init();
-  laser_init();
-  //camera_init();
-
-  HAL_Delay(2000);
-
-  uart_terminal_init(&huart4);
-  uart_terminal_print("Control task start!\n");
-	uint8_t str[] = "Hello!\n";
-	uint8_t res = 0;
-	uartprintf("Hello, %s", str);
-	usbprintf("Hello, %s", str);
-	uartprintf("Hello, %d", 10);
-	usbprintf("Hello, %d", 10);
-	//MX_USB_DEVICE_Init();
-  for(;;)
-  {
-    //uart_terminal_print("Loop\n");
-    uart_terminal_cmd_def();
-    //res = CDC_Transmit_FS(str, sizeof(str));
-    usbprintf("Hello, %s", str);
-    usbprintf("Hello, %d", 10);
-	//res = CDC_Transmit_FS(str, sizeof(str) - 1);
-    osDelay(1000);
-  }
-
-}
-
-void ModulesTask(void *argument)
-{
-
-  for(;;)
-  {
-    osDelay(1);
-  }
-
-}
 
 
 /**
@@ -236,15 +137,10 @@ void ModulesTask(void *argument)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
   if (htim->Instance == TIM13) {
     HAL_IncTick();
   }
-  /* USER CODE BEGIN Callback 1 */
 
-  /* USER CODE END Callback 1 */
 }
 
 

@@ -76,7 +76,10 @@
 /* USER CODE BEGIN MESSAGE_BUFFER_LENGTH_TYPE */
 /* Defaults to size_t for backward compatibility, but can be changed
    if lengths will always be less than the number of bytes in a size_t. */
-#define configMESSAGE_BUFFER_LENGTH_TYPE         size_t
+/* If the messages stored in a message buffer will never be larger than
+ * 65535 bytes then defining configMESSAGE_BUFFER_LENGTH_TYPE to uint16_t
+ *  will save 2 bytes per message on a 32-bit microcontroller.*/
+#define configMESSAGE_BUFFER_LENGTH_TYPE         uint16_t/*size_t*/
 /* USER CODE END MESSAGE_BUFFER_LENGTH_TYPE */
 
 /* Co-routine definitions. */

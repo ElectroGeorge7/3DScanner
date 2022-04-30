@@ -6,13 +6,23 @@
  * @brief Communication control with terminal by uart interface.
  */
 
-#include "../Terminal/uart_terminal.h"
-#include "stm32h7xx_hal.h"
+#include "uart_terminal.h"
 
-static UART_HandleTypeDef *ghuart;
+#include <string.h>
+#include <stdio.h>
+
+#include "modules.h"
+
+static UART_HandleTypeDef huart4;
 static uint8_t UartTermRxBuf[MAX_TERM_CMD_SIZE] = {0,};
 
-//--------------------------------------------------- Public functions ---------------------------------------------//
+
+//--------------------------------------------------- Private functions --------------------------------------------//
+static void uart4_init(void);
+/// @brief Return the string from terminal received by uart
+static uint8_t *uart_terminal_scanf(void);
+//------------------------------------------------------------------------------------------------------------------//
+
 
 /**
  * @brief Initialize uart handler in uart_terminal
@@ -20,14 +30,8 @@ static uint8_t UartTermRxBuf[MAX_TERM_CMD_SIZE] = {0,};
  * @return  HAL_OK - success,
  *          HAL_ERROR - uart handler was not defined
  */
-HAL_StatusTypeDef uart_terminal_init(UART_HandleTypeDef *huart){
-
-	if ( huart != NULL ){
-		ghuart = huart;
-		return   HAL_OK;
-	}else{
-		// создать сообщение об ошибке, и затем показать её в реестре ошибок.
-	}
+HAL_StatusTypeDef uart_terminal_init(void){
+	uart4_init();
 }
 
 /**
@@ -39,7 +43,7 @@ HAL_StatusTypeDef uart_terminal_init(UART_HandleTypeDef *huart){
 HAL_StatusTypeDef uart_terminal_print(uint8_t *string){
 
 	if ( 0 != strlen(string) ){
-		if ( HAL_OK == HAL_UART_Transmit(ghuart, string, strlen(string), UART_STR_PRINT_TIMEOUT) ){
+		if ( HAL_OK == HAL_UART_Transmit(&huart4, string, strlen(string), UART_STR_PRINT_TIMEOUT) ){
 			return HAL_OK;
 		}
 	}else{
@@ -57,7 +61,7 @@ HAL_StatusTypeDef uart_terminal_print(uint8_t *string){
 HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len){
 
 	if ( 0 != len ){
-		if ( HAL_OK == HAL_UART_Transmit(ghuart, memArr, len, UART_MEM_TRANSMIT_TIMEOUT) ){
+		if ( HAL_OK == HAL_UART_Transmit(&huart4, memArr, len, UART_MEM_TRANSMIT_TIMEOUT) ){
 			return HAL_OK;
 		}
 	}else{
@@ -74,6 +78,7 @@ HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len){
  * @todo Сделать проверки корректности заполнения структур модулей,
  * 		 при неправильном заполнении бывает HardFault
  */
+/* 
 HAL_StatusTypeDef uart_terminal_cmd_def(void){
 	uint16_t i=0;
 	uint16_t moduleNmb = 0;
@@ -106,10 +111,50 @@ HAL_StatusTypeDef uart_terminal_cmd_def(void){
 		return HAL_ERROR;
 	}
 }
-
+*/
 //------------------------------------------------------------------------------------------------------------------//
 
 //--------------------------------------------------- Private functions --------------------------------------------//
+
+/**
+  * @brief UART4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void uart4_init(void)
+{
+
+  huart4.Instance = UART4;
+  huart4.Init.BaudRate = 115200;
+  huart4.Init.WordLength = UART_WORDLENGTH_8B;
+  huart4.Init.StopBits = UART_STOPBITS_1;
+  huart4.Init.Parity = UART_PARITY_NONE;
+  huart4.Init.Mode = UART_MODE_TX_RX;
+  huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart4.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart4.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
+  huart4.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
+  huart4.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
+  if (HAL_UART_Init(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart4, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart4, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
 
 /**
  * @brief Return the string from terminal received by uart
@@ -117,7 +162,7 @@ HAL_StatusTypeDef uart_terminal_cmd_def(void){
  *          NULL - memory transmission by uart was failed
  * @note we receive from terminal just short commands, no any large arrays of memory
  */
-uint8_t * uart_terminal_scanf(void){
+static uint8_t * uart_terminal_scanf(void){
 
 	memset(UartTermRxBuf, 0, sizeof(UartTermRxBuf));
 	/**
@@ -127,7 +172,7 @@ uint8_t * uart_terminal_scanf(void){
 	 * 			because this function returns HAL_TIMEOUT 
 	 * 			if packet is less than MAX_TERM_CMD_SIZE
 	 */
-	HAL_UART_Receive(ghuart, UartTermRxBuf, MAX_TERM_CMD_SIZE, UART_CMD_SCAN_TIMEOUT);
+	HAL_UART_Receive(&huart4, UartTermRxBuf, MAX_TERM_CMD_SIZE, UART_CMD_SCAN_TIMEOUT);
 	if ( strlen(UartTermRxBuf) > 0 ){
 		// check the end byte of conversation
 		for(uint32_t i = 0; i < MAX_TERM_CMD_SIZE ; i++){
@@ -139,26 +184,5 @@ uint8_t * uart_terminal_scanf(void){
 	return NULL;
 }
 
-
-
-__section (".ram_d3") static char __aligned(32) uartprintbuf[256 + 2] = {'\0'};
-
-void uartconsole_printf(const char* fmt, ...){
-    //char printbuf[128 + 2] = {0};
-    va_list args;
-    size_t size = 0;
-    va_start(args, fmt);
-    int ret = vsnprintf(uartprintbuf, sizeof(uartprintbuf) - 2, fmt, args);
-    va_end(args);
-    if(ret < 0){
-        return;
-    }
-    size += ret;
-    uartprintbuf[size] = '\n';
-    uartprintbuf[size + 1] = '\0';
-
-    uart_terminal_print(uartprintbuf);
-
-}
 
 //------------------------------------------------------------------------------------------------------------------//
