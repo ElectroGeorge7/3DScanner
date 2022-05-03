@@ -151,7 +151,7 @@ struct sStepM_t {
 #include "camera.h"
 
 typedef struct {
-  const char fileName[CAMERA_FILES_MAX_LENGTH];
+  const char fileName[2*CAMERA_FILES_MAX_LENGTH];
   const char dirName[CAMERA_FILES_MAX_LENGTH];
   uint32_t *frameBuf;
   uint32_t *configBuf;

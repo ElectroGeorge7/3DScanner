@@ -52,22 +52,26 @@ void StorageTask(void *argument)
   f_close(&sdFile);
 */
   storage_init();
-  fr = f_mkdir("ap");
-  fr = f_opendir(&dp, "/ap");
+  //fr = f_mkdir("ap");
+  //fr = f_opendir(&dp, "/ap");
 
   for(;;)
   {
     //res = CDC_Transmit_FS(str, sizeof(str));
-    flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_FILE_CREATE, osFlagsWaitAny, osWaitForever);
+    flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_FILE_CREATE | CAMERA_EVT_DIR_CREATE, osFlagsWaitAny, osWaitForever);
     switch(flags){
     case CAMERA_EVT_FILE_CREATE:
       res = osMessageQueueGet(cameraQueueHandler, &cameraMsg, 0, osWaitForever);
       MX_USB_DEVICE_Stop();
       SavePictureMB(cameraMsg.fileName, (sFrameBuf_t *)cameraMsg.frameBuf, (((sFrameBuf_t *)cameraMsg.frameBuf)->size) / 2);
       MX_USB_DEVICE_Start();
+      osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE);
       break;
     case CAMERA_EVT_DIR_CREATE:
-    	;
+    	res = osMessageQueueGet(cameraQueueHandler, &cameraMsg, 0, osWaitForever);
+      fr = f_mkdir(cameraMsg.dirName);
+      //fr = f_opendir(&dp, "/ap");
+      osEventFlagsSet(cameraEvtId, CAMERA_EVT_DIR_CREATE_DONE);
       break;
     default:
     	;

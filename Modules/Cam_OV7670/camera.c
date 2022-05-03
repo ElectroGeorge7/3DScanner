@@ -1,4 +1,6 @@
 
+#include "camera.h"
+
 #include "camera_hw_init.h"
 #include "camera_hw_i2c.h"
 #include "../Modules/Cam_OV7670/ov7670.h"
@@ -48,7 +50,7 @@ HAL_StatusTypeDef camera_default_config(void){
 	camera_config(ov7670_default_config);
 };
 
-HAL_StatusTypeDef camera_get_frame(struct sCamera_t *camera, sFrameBuf_t *frameBuf){
+HAL_StatusTypeDef camera_get_frame(sFrameBuf_t *frameBuf){
     HAL_StatusTypeDef result;
     result = camera_hw_get_frame(frameBuf);
 

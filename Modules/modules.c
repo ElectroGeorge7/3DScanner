@@ -354,6 +354,7 @@ static ScannerStatus_t laser_cmd_cb(void){
 static ScannerStatus_t camera_cmd_cb(void){
     ScannerStatus_t res = SCANNER_OK;
     osStatus_t osRes;
+    uint32_t flags;
     CameraQueueObj_t cameraMsg;
 
     if ( camera.status & CAMERA_POWER_UPDATE_F){
@@ -372,12 +373,14 @@ static ScannerStatus_t camera_cmd_cb(void){
     };
 
     if ( camera.status & CAMERA_PICTURE_UPDATE_F){
-        camera_get_frame(&camera, &new_frame_buffer);
+        camera_get_frame(&new_frame_buffer);
         cameraMsg.frameBuf = (uint32_t *) &new_frame_buffer;
         strncpy(cameraMsg.fileName, camera.pictureName, CAMERA_FILES_MAX_LENGTH);
         osRes = osMessageQueuePut (cameraQueueHandler, &cameraMsg, 0, 0);
         osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE);
-        osThreadYield();
+		flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE, osFlagsWaitAny, osWaitForever);
+		if ( !(flags & CAMERA_EVT_FILE_CREATE_DONE) )
+			usbprintf("File creating error");
         // дождаться события окончания
         //res |= stepM_set_dir(stepM.brightVal);
         camera.status &= ~CAMERA_PICTURE_UPDATE_F;

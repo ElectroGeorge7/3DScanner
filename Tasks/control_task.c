@@ -33,18 +33,63 @@ typedef enum{
 
 static ScannerMode_t gScannerMode = WAIT;
 
+extern sFrameBuf_t new_frame_buffer;
+
 ScannerStatus_t scan_start(const char *objName){
+	ScannerStatus_t res = SCANNER_OK;
+    osStatus_t osRes;
+	CameraQueueObj_t cameraMsg;
+	uint32_t flags;
+	char pictureName[CAMERA_FILES_MAX_LENGTH] = {0};
+	char picturePath[2*CAMERA_FILES_MAX_LENGTH] = {0};
+
+	laser_on();
+	camera_on();
+	stepM_on();
+	stepM_set_dir(CW);
+	stepM_set_speed(10);
+
 	// создать диреторию
-	
+	strncpy(cameraMsg.dirName, objName, CAMERA_FILES_MAX_LENGTH);
+	osRes = osMessageQueuePut (cameraQueueHandler, &cameraMsg, 0, 0);
+	osEventFlagsSet(cameraEvtId, CAMERA_EVT_DIR_CREATE);
+	flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_DIR_CREATE_DONE, osFlagsWaitAny, osWaitForever);
+	if ( !(flags & CAMERA_EVT_DIR_CREATE_DONE) )
+		usbprintf("Dir creating error");
 	// цикл (12 раз - 360гр.)
-	// включить лазер
-	// получить фрейм
-	// сохранить фотографию
-	// отключить лазер
-	// получить фрейм
-	// сохранить фотографию
-	// повернуть на 30гр.
-}
+	for (uint8_t i=0; i < 8; i++){
+		// включить лазер
+		laser_set(250);
+		// получить фрейм
+		camera_get_frame(&new_frame_buffer);
+		// сохранить фотографию
+		cameraMsg.frameBuf = (uint32_t *) &new_frame_buffer;
+		sprintf(pictureName, "im%d.rgb", 2*i);
+		sprintf(picturePath, "%s/%s", objName, pictureName);
+		strncpy(cameraMsg.fileName, picturePath, CAMERA_FILES_MAX_LENGTH);
+		osRes = osMessageQueuePut (cameraQueueHandler, &cameraMsg, 0, 0);
+		osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE);
+		flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE, osFlagsWaitAny, osWaitForever);
+		if ( !(flags & CAMERA_EVT_FILE_CREATE_DONE) )
+			usbprintf("File creating error");
+		// отключить лазер
+		laser_set(0);
+		// получить фрейм
+		camera_get_frame(&new_frame_buffer);
+		// сохранить фотографию
+		cameraMsg.frameBuf = (uint32_t *) &new_frame_buffer;
+		sprintf(pictureName, "im%d.rgb", 2*i+1);
+		sprintf(picturePath, "%s/%s", objName, pictureName);
+		strncpy(cameraMsg.fileName, picturePath, CAMERA_FILES_MAX_LENGTH);
+		osRes = osMessageQueuePut (cameraQueueHandler, &cameraMsg, 0, 0);
+		osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE);
+		flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE, osFlagsWaitAny, osWaitForever);
+		if ( !(flags & CAMERA_EVT_FILE_CREATE_DONE) )
+			usbprintf("File creating error");
+		// повернуть на 30гр.
+		stepM_rotate(25);
+	}
+};
 
 /**
   * @brief  Function implementing the controlTask thread.
@@ -97,6 +142,7 @@ void ControlTask(void *argument)
 			gScannerMode = SCANNING;
 			sscanf(msg, "%*s -object:%s", strBuf);
 			// запустить сканирование
+			scan_start(strBuf);
 			usbprintf("scan object name - %s", strBuf);
 			osDelay(1000);
 			}
