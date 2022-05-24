@@ -57,7 +57,7 @@ ScannerStatus_t scan_start(const char *objName){
 	if ( !(flags & CAMERA_EVT_DIR_CREATE_DONE) )
 		usbprintf("Dir creating error");
 	// цикл (12 раз - 360гр.)
-	for (uint8_t i=0; i < 8; i++){
+	for (uint8_t i=0; i < 18; i++){
 		// включить лазер
 		laser_set(250);
 		// получить фрейм
@@ -87,7 +87,7 @@ ScannerStatus_t scan_start(const char *objName){
 		if ( !(flags & CAMERA_EVT_FILE_CREATE_DONE) )
 			usbprintf("File creating error");
 		// повернуть на 30гр.
-		stepM_rotate(25);
+		stepM_rotate(11);
 	}
 };
 

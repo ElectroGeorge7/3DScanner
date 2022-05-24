@@ -38,7 +38,10 @@
 
 /* USER CODE END PV */
 
-__section (".ram_d3") PCD_HandleTypeDef __aligned(32) hpcd_USB_OTG_FS;
+// cannot be transferred to another RAM,
+// AHB master Idle state error appears
+PCD_HandleTypeDef hpcd_USB_OTG_FS;
+
 void Error_Handler(void);
 
 /* External functions --------------------------------------------------------*/

@@ -95,7 +95,7 @@ int main(void)
   uartprintf("UART terminal init");
   //storage_init();
   uartprintf("Storage init");
-  HAL_Delay(1000);
+  HAL_Delay(100);
   uartprintf("USB init start");
   usb_comp_dev_init();
   uartprintf("USB init finish");
@@ -153,6 +153,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  uartprintf("Error Handler");
   while (1)
   {
   }

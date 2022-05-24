@@ -59,6 +59,8 @@
 /* USER CODE BEGIN PFP */
  void MX_USB_DEVICE_Start(void);
  void MX_USB_DEVICE_Stop(void);
+ void MX_USB_DEVICE_Suspend(void);
+ void MX_USB_DEVICE_Resume(void);
 /* USER CODE END PFP */
 
 /*

@@ -15,8 +15,8 @@
 
 void MX_DMA_Init(void);
 
-__section (".ram_d3") void MX_DCMI_Init(void);
-__section (".ram_d3") HAL_StatusTypeDef HAL_DCMI_MultiBufferStart_DMA( uint32_t DCMI_Mode, 	  	 \
+void MX_DCMI_Init(void);
+HAL_StatusTypeDef HAL_DCMI_MultiBufferStart_DMA( uint32_t DCMI_Mode, 	  	 \
 												 sFrameBuf_t *frameBuf, 	 \
 												uint32_t Length);
 
