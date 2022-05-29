@@ -62,11 +62,9 @@ void StorageTask(void *argument)
     switch(flags){
     case CAMERA_EVT_FILE_CREATE:
       res = osMessageQueueGet(cameraQueueHandler, &cameraMsg, 0, osWaitForever);
-      //MX_USB_DEVICE_Stop();
-      MX_USB_DEVICE_Suspend();
+      MX_USB_DEVICE_Stop();
       SavePictureMB(cameraMsg.fileName, (sFrameBuf_t *)cameraMsg.frameBuf, (((sFrameBuf_t *)cameraMsg.frameBuf)->size) / 2);
-      //MX_USB_DEVICE_Start();
-      MX_USB_DEVICE_Resume();
+      MX_USB_DEVICE_Start();
       osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE);
       break;
     case CAMERA_EVT_DIR_CREATE:

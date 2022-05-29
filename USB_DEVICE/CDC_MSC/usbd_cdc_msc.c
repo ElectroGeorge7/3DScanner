@@ -1,37 +1,7 @@
 /**
   ******************************************************************************
-  * @file    usbd_template.c
-  * @author  MCD Application Team
-  * @brief   This file provides the HID core functions.
-  *
-  * @verbatim
-  *
-  *          ===================================================================
-  *                                TEMPLATE Class  Description
-  *          ===================================================================
-  *
-  *
-  *
-  *
-  *
-  *
-  * @note     In HS mode and when the DMA is used, all variables and data structures
-  *           dealing with the DMA during the transaction process should be 32-bit aligned.
-  *
-  *
-  *  @endverbatim
-  *
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                      www.st.com/SLA0044
-  *
+  * @file    usbd_cdc_msc.c
+  * @brief   This file provides the Composite Device core functions.
   ******************************************************************************
   */
 
@@ -43,48 +13,6 @@
 #include "usbd_cdc.h"
 #include "usbd_msc.h"
 
-/** @addtogroup STM32_USB_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup USBD_TEMPLATE
-  * @brief usbd core module
-  * @{
-  */
-
-/** @defgroup USBD_TEMPLATE_Private_TypesDefinitions
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup USBD_TEMPLATE_Private_Defines
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-
-/** @defgroup USBD_TEMPLATE_Private_Macros
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-
-
-
-/** @defgroup USBD_TEMPLATE_Private_FunctionPrototypes
-  * @{
-  */
-
 
 static uint8_t USBD_MSC_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
 static uint8_t USBD_MSC_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
@@ -95,13 +23,7 @@ static uint8_t USBD_MSC_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev);
 
 static uint8_t *USBD_MSC_CDC_GetCfgDesc(uint16_t *length);
 static uint8_t *USBD_MSC_CDC_GetDeviceQualifierDesc(uint16_t *length);
-/**
-  * @}
-  */
 
-/** @defgroup USBD_TEMPLATE_Private_Variables
-  * @{
-  */
 
 USBD_ClassTypeDef  USBD_MSC_CDC_ClassDriver =
 {
@@ -294,16 +216,8 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_CDC_DeviceQualifierDesc[USB_LEN_DEV_QUALIF
 };
 
 /**
-  * @}
-  */
-
-/** @defgroup USBD_TEMPLATE_Private_Functions
-  * @{
-  */
-
-/**
-  * @brief  USBD_TEMPLATE_Init
-  *         Initialize the TEMPLATE interface
+  * @brief  USBD_MSC_CDC_Init
+  *         Initialize the MSC_CDC interfaces
   * @param  pdev: device instance
   * @param  cfgidx: Configuration index
   * @retval status
@@ -324,8 +238,8 @@ static uint8_t USBD_MSC_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 }
 
 /**
-  * @brief  USBD_TEMPLATE_Init
-  *         DeInitialize the TEMPLATE layer
+  * @brief  USBD_MSC_CDC_Init
+  *         DeInitialize the MSC_CDC layer
   * @param  pdev: device instance
   * @param  cfgidx: Configuration index
   * @retval status
@@ -342,8 +256,8 @@ static uint8_t USBD_MSC_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 }
 
 /**
-  * @brief  USBD_TEMPLATE_Setup
-  *         Handle the TEMPLATE specific requests
+  * @brief  USBD_MSC_CDC_Setup
+  *         Handle the MSC_CDC specific requests
   * @param  pdev: instance
   * @param  req: usb requests
   * @retval status
@@ -363,7 +277,7 @@ static uint8_t USBD_MSC_CDC_Setup(USBD_HandleTypeDef *pdev,
 
 
 /**
-  * @brief  USBD_TEMPLATE_GetCfgDesc
+  * @brief  USBD_MSC_CDC_GetCfgDesc
   *         return configuration descriptor
   * @param  length : pointer data length
   * @retval pointer to descriptor buffer
@@ -388,7 +302,7 @@ uint8_t *USBD_MSC_CDC_GetDeviceQualifierDesc(uint16_t *length)
 
 
 /**
-  * @brief  USBD_TEMPLATE_DataIn
+  * @brief  USBD_MSC_CDC_DataIn
   *         handle data IN Stage
   * @param  pdev: device instance
   * @param  epnum: endpoint index
@@ -404,7 +318,7 @@ static uint8_t USBD_MSC_CDC_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum)
 }
 
 /**
-  * @brief  USBD_TEMPLATE_EP0_RxReady
+  * @brief  USBD_MSC_CDC_EP0_RxReady
   *         handle EP0 Rx Ready event
   * @param  pdev: device instance
   * @retval status
@@ -416,7 +330,7 @@ static uint8_t USBD_MSC_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev)
 }
 
 /**
-  * @brief  USBD_TEMPLATE_DataOut
+  * @brief  USBD_MSC_CDC_DataOut
   *         handle data OUT Stage
   * @param  pdev: device instance
   * @param  epnum: endpoint index
@@ -431,19 +345,5 @@ static uint8_t USBD_MSC_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum)
 	return USBD_CDC_DataOut(pdev, epnum);
 }
 
-
-/**
-  * @}
-  */
-
-
-/**
-  * @}
-  */
-
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
