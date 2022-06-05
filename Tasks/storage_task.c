@@ -15,6 +15,9 @@
 
 #include "stm32h7xx_hal.h"
 
+#include "encode_dma.h"
+#include "image_320_240_rgb.h"
+
 #define Detect_SDIO_Pin GPIO_PIN_0
 #define Detect_SDIO_GPIO_Port GPIOB
 
@@ -22,14 +25,35 @@ SD_HandleTypeDef hsd2;
 
 __section (".ram_d3") static FATFS __aligned(32) sdFatFs;
 __section (".ram_d3") static FIL __aligned(32) sdFile;
+__section (".ram_d3") static FIL __aligned(32) JPEG_File;  /* File object */
+__section (".ram_d3") static DIR __aligned(32) dp;
 
 extern osMessageQueueId_t cameraQueueHandler;
 extern osEventFlagsId_t cameraEvtId;
 
+JPEG_HandleTypeDef hjpeg;
+uint32_t RGB_ImageAddress;
+/**
+  * @brief JPEG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_JPEG_Init(void)
+{
+  hjpeg.Instance = JPEG;
+  if (HAL_JPEG_Init(&hjpeg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+
 //BYTE readBuf[50] = {0};
 //UINT br = 0;
 FRESULT fr;
-DIR dp;
+
+//uint32_t Image_RGB565[2];
+
 void StorageTask(void *argument)
 {
   //FRESULT fr;
@@ -37,6 +61,10 @@ void StorageTask(void *argument)
   osStatus_t res = 0;
   CameraQueueObj_t cameraMsg;
   uint32_t flags;
+
+  uint32_t JpegEncodeProcessing_End = 0;
+  RGB_ImageAddress = (uint32_t)Image_RGB565;
+
 
   // Open or create a log file and ready to append
   //fr = f_mkfs("", FM_ANY, 0, work, sizeof(work));
@@ -54,6 +82,39 @@ void StorageTask(void *argument)
   storage_init();
   //fr = f_mkdir("ap");
   //fr = f_opendir(&dp, "/ap");
+  MX_USB_DEVICE_Stop();
+
+  /*##-1- JPEG Initialization ################################################*/   
+  /* Init The JPEG Color Look Up Tables used for YCbCr to RGB conversion   */ 
+  JPEG_InitColorTables();
+  MX_JPEG_Init();
+
+  //HAL_JPEG_ConfigEncoding();
+  //   Respectively, for Encoding operation the JPEG peripheral input should be organized
+  // in YCbCr MCU blocks. It is up to the application to perform the necessary RGB to YCbCr
+  // MCU blocks transformation before feeding the JPEG peripheral with data.
+  //HAL_JPEG_Encode();
+
+
+  /*##-6- Create the JPEG file with write access ########################*/
+  if(f_open(&JPEG_File, "image14.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
+  {
+    /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
+    JPEG_Encode_DMA(&hjpeg, RGB_ImageAddress, RGB_IMAGE_SIZE, &JPEG_File);
+    
+    /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
+    do
+    {
+      JPEG_EncodeInputHandler(&hjpeg);
+      JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
+      
+    }while(JpegEncodeProcessing_End == 0);
+    
+    /*##-9- Close the JPEG file #######################################*/
+    f_close(&JPEG_File);
+  }
+
+  MX_USB_DEVICE_Start();
 
   for(;;)
   {

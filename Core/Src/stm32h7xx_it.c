@@ -25,6 +25,7 @@
 extern DMA_HandleTypeDef hdma_dcmi;
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 extern TIM_HandleTypeDef htim13;
+extern JPEG_HandleTypeDef    hjpeg;
 
 /******************************************************************************/
 /*           Cortex Processor Interruption and Exception Handlers          */
@@ -139,6 +140,16 @@ void OTG_FS_IRQHandler(void)
   HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
 }
 
+void JPEG_IRQHandler(void)
+{
+  HAL_JPEG_IRQHandler(&hjpeg);
+}
 
+void MDMA_IRQHandler()
+{
+  /* Check the interrupt and clear flag */
+  HAL_MDMA_IRQHandler(hjpeg.hdmain);
+  HAL_MDMA_IRQHandler(hjpeg.hdmaout);
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

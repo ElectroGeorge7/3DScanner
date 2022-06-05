@@ -83,7 +83,7 @@
 /* #define HAL_HCD_MODULE_ENABLED   */
 /* #define HAL_DFSDM_MODULE_ENABLED   */
 /* #define HAL_DSI_MODULE_ENABLED   */
-/* #define HAL_JPEG_MODULE_ENABLED   */
+#define HAL_JPEG_MODULE_ENABLED
 /* #define HAL_MDIOS_MODULE_ENABLED   */
 /* #define HAL_PSSI_MODULE_ENABLED   */
 /* #define HAL_DTS_MODULE_ENABLED   */
