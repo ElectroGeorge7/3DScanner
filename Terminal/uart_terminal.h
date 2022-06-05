@@ -1,6 +1,4 @@
 /**
- * @author Katukiya G.
- *
  * @file uart_terminal.h 
  *
  * @brief Communication control with terminal by uart interface.

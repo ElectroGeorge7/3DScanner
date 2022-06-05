@@ -1,6 +1,4 @@
 /**
- * @author Katukiya G.
- *
  * @file uart_terminal.h
  *
  * @brief Communication control with terminal by uart interface.
@@ -78,7 +76,7 @@ HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len){
  * @todo Сделать проверки корректности заполнения структур модулей,
  * 		 при неправильном заполнении бывает HardFault
  */
-/* 
+#if 0
 HAL_StatusTypeDef uart_terminal_cmd_def(void){
 	uint16_t i=0;
 	uint16_t moduleNmb = 0;
@@ -111,7 +109,7 @@ HAL_StatusTypeDef uart_terminal_cmd_def(void){
 		return HAL_ERROR;
 	}
 }
-*/
+#endif
 //------------------------------------------------------------------------------------------------------------------//
 
 //--------------------------------------------------- Private functions --------------------------------------------//
