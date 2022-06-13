@@ -97,7 +97,7 @@ void StorageTask(void *argument)
 
 
   /*##-6- Create the JPEG file with write access ########################*/
-  if(f_open(&JPEG_File, "image14.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
+  if(f_open(&JPEG_File, "image50.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
   {
     /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
     JPEG_Encode_DMA(&hjpeg, RGB_ImageAddress, RGB_IMAGE_SIZE, &JPEG_File);
