@@ -164,10 +164,10 @@ void StorageTask(void *argument)
 
 
       /*##-6- Create the JPEG file with write access ########################*/
-      if(f_open(&JPEG_File, "image65.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
+      if(f_open(&JPEG_File, "image66.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
       {
         /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
-        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf1, RGB_IMAGE_SIZE, &JPEG_File);
+        JPEG_Encode_DMA(&hjpeg, (sFrameBuf_t *)(cameraMsg.frameBuf), RGB_IMAGE_SIZE, &JPEG_File);
 
         /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
         do
@@ -176,44 +176,6 @@ void StorageTask(void *argument)
           JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
 
         }while(JpegEncodeProcessing_End == 0);
-
-        HAL_JPEG_DisableHeaderParsing(&hjpeg);
-
-        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
-        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf2, RGB_IMAGE_SIZE, &JPEG_File);
-
-        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
-        do
-        {
-          JPEG_EncodeInputHandler(&hjpeg);
-          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
-
-        }while(JpegEncodeProcessing_End == 0);
-
-
-        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
-        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf3, RGB_IMAGE_SIZE, &JPEG_File);
-
-        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
-        do
-        {
-          JPEG_EncodeInputHandler(&hjpeg);
-          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
-
-        }while(JpegEncodeProcessing_End == 0);
-
-
-        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
-        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf4, RGB_IMAGE_SIZE, &JPEG_File);
-
-        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
-        do
-        {
-          JPEG_EncodeInputHandler(&hjpeg);
-          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
-
-        }while(JpegEncodeProcessing_End == 0);
-
 
         /*##-9- Close the JPEG file #######################################*/
         f_close(&JPEG_File);

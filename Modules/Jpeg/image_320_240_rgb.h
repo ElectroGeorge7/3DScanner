@@ -31,7 +31,7 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 #define RGB_IMAGE_WIDTH  ((uint32_t)640)	//((uint32_t)320)
-#define RGB_IMAGE_HEIGHT ((uint32_t)120)	//((uint32_t)240)
+#define RGB_IMAGE_HEIGHT ((uint32_t)480)	//((uint32_t)240)
 
 
 #if (JPEG_RGB_FORMAT == JPEG_ARGB8888)

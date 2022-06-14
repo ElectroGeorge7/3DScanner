@@ -23,6 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "fatfs.h"
+#include "camera.h"
 #include "jpeg_utils.h"
 
 #define JPEG_CHROMA_SAMPLING     JPEG_444_SUBSAMPLING   /* Select Chroma Sampling: JPEG_420_SUBSAMPLING, JPEG_422_SUBSAMPLING, JPEG_444_SUBSAMPLING   */
@@ -35,7 +36,7 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-uint32_t JPEG_Encode_DMA(JPEG_HandleTypeDef *hjpeg, uint32_t RGBImageBufferAddress, uint32_t RGBImageSize_Bytes, FIL *jpgfile);
+uint32_t JPEG_Encode_DMA(JPEG_HandleTypeDef *hjpeg, sFrameBuf_t *frameBuf, uint32_t RGBImageSize_Bytes, FIL *jpgfile);
 uint32_t JPEG_EncodeOutputHandler(JPEG_HandleTypeDef *hjpeg);
 void JPEG_EncodeInputHandler(JPEG_HandleTypeDef *hjpeg);
 
