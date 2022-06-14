@@ -30,8 +30,8 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-#define RGB_IMAGE_WIDTH  ((uint32_t)320)  
-#define RGB_IMAGE_HEIGHT ((uint32_t)240)
+#define RGB_IMAGE_WIDTH  ((uint32_t)640)	//((uint32_t)320)
+#define RGB_IMAGE_HEIGHT ((uint32_t)120)	//((uint32_t)240)
 
 
 #if (JPEG_RGB_FORMAT == JPEG_ARGB8888)
@@ -44,7 +44,7 @@ extern "C" {
 
 #elif(JPEG_RGB_FORMAT == JPEG_RGB565)
   #define RGB_IMAGE_SIZE  ((uint32_t)RGB_IMAGE_HEIGHT * RGB_IMAGE_WIDTH * 2)
-  extern const uint32_t Image_RGB565[RGB_IMAGE_SIZE];
+  extern const uint32_t Image_RGB565[1];
 
 #else
   #error "unknown JPEG_RGB_FORMAT "

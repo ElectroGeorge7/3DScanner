@@ -54,7 +54,7 @@ const osThreadAttr_t modulesTask_attributes = {
 osThreadId_t storageTaskHandle;
 const osThreadAttr_t storageTask_attributes = {
   .name = "storageTask",
-  .priority = (osPriority_t) osPriorityNormal4,
+  .priority = (osPriority_t) osPriorityNormal2,
   .stack_size = 768 * 4
 };
 

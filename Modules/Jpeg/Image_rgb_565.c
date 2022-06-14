@@ -21,8 +21,9 @@
 #include "image_320_240_rgb.h"
 
 #if (JPEG_RGB_FORMAT == JPEG_RGB565)
-const uint32_t Image_RGB565[RGB_IMAGE_SIZE] =
+const uint32_t Image_RGB565[1] =
 {
+#if 0
 0x22512251,
 0x22512251,
 0x22512251,
@@ -38422,6 +38423,8 @@ const uint32_t Image_RGB565[RGB_IMAGE_SIZE] =
 0x31E252C6,
 0x42643A23,
 0x32034AC6,
-0x4AC63203};
+0x4AC63203
+#endif
+};
 #endif /*(JPEG_RGB_FORMAT == JPEG_RGB565)*/
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

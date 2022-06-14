@@ -47,6 +47,11 @@ static void MX_JPEG_Init(void)
   }
 }
 
+void my_swap(uint8_t x, uint8_t y){
+	uint8_t temp = x;
+	x = y;
+	y = temp;
+}
 
 //BYTE readBuf[50] = {0};
 //UINT br = 0;
@@ -61,6 +66,12 @@ void StorageTask(void *argument)
   osStatus_t res = 0;
   CameraQueueObj_t cameraMsg;
   uint32_t flags;
+
+  uint8_t temp;
+  uint8_t *jpegBuf1;
+  uint8_t *jpegBuf2;
+  uint8_t *jpegBuf3;
+  uint8_t *jpegBuf4;
 
   uint32_t JpegEncodeProcessing_End = 0;
   RGB_ImageAddress = (uint32_t)Image_RGB565;
@@ -82,22 +93,17 @@ void StorageTask(void *argument)
   storage_init();
   //fr = f_mkdir("ap");
   //fr = f_opendir(&dp, "/ap");
-  MX_USB_DEVICE_Stop();
+
+  //MX_USB_DEVICE_Stop();
 
   /*##-1- JPEG Initialization ################################################*/   
   /* Init The JPEG Color Look Up Tables used for YCbCr to RGB conversion   */ 
   JPEG_InitColorTables();
   MX_JPEG_Init();
 
-  //HAL_JPEG_ConfigEncoding();
-  //   Respectively, for Encoding operation the JPEG peripheral input should be organized
-  // in YCbCr MCU blocks. It is up to the application to perform the necessary RGB to YCbCr
-  // MCU blocks transformation before feeding the JPEG peripheral with data.
-  //HAL_JPEG_Encode();
-
-
+#if 0
   /*##-6- Create the JPEG file with write access ########################*/
-  if(f_open(&JPEG_File, "image50.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
+  if(f_open(&JPEG_File, "image51.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
   {
     /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
     JPEG_Encode_DMA(&hjpeg, RGB_ImageAddress, RGB_IMAGE_SIZE, &JPEG_File);
@@ -113,8 +119,9 @@ void StorageTask(void *argument)
     /*##-9- Close the JPEG file #######################################*/
     f_close(&JPEG_File);
   }
+#endif
 
-  MX_USB_DEVICE_Start();
+  //MX_USB_DEVICE_Start();
 
   for(;;)
   {
@@ -124,7 +131,100 @@ void StorageTask(void *argument)
     case CAMERA_EVT_FILE_CREATE:
       res = osMessageQueueGet(cameraQueueHandler, &cameraMsg, 0, osWaitForever);
       MX_USB_DEVICE_Stop();
-      SavePictureMB(cameraMsg.fileName, (sFrameBuf_t *)cameraMsg.frameBuf, (((sFrameBuf_t *)cameraMsg.frameBuf)->size) / 2);
+
+      // swap RGB order in right way for encoder
+      jpegBuf1 = (uint16_t *)( ( (sFrameBuf_t *)cameraMsg.frameBuf )->pFrameBuf1);
+      jpegBuf2 = (uint16_t *)( ( (sFrameBuf_t *)cameraMsg.frameBuf )->pFrameBuf2);
+      jpegBuf3 = (uint16_t *)( ( (sFrameBuf_t *)cameraMsg.frameBuf )->pFrameBuf3);
+      jpegBuf4 = (uint16_t *)( ( (sFrameBuf_t *)cameraMsg.frameBuf )->pFrameBuf4);
+
+      for (int i=0; i < (153600); i+=2){
+    		temp = jpegBuf1[i];
+    		jpegBuf1[i] = jpegBuf1[i+1];
+    		jpegBuf1[i+1] = temp;
+      };
+
+      for (int i=0; i < (153600); i+=2){
+    		temp = jpegBuf2[i];
+    		jpegBuf2[i] = jpegBuf2[i+1];
+    		jpegBuf2[i+1] = temp;
+      };
+
+      for (int i=0; i < (153600); i+=2){
+    		temp = jpegBuf3[i];
+    		jpegBuf3[i] = jpegBuf3[i+1];
+    		jpegBuf3[i+1] = temp;
+      };
+
+      for (int i=0; i < (153600); i+=2){
+    		temp = jpegBuf4[i];
+    		jpegBuf4[i] = jpegBuf4[i+1];
+    		jpegBuf4[i+1] = temp;
+      };
+
+
+      /*##-6- Create the JPEG file with write access ########################*/
+      if(f_open(&JPEG_File, "image65.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
+      {
+        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
+        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf1, RGB_IMAGE_SIZE, &JPEG_File);
+
+        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
+        do
+        {
+          JPEG_EncodeInputHandler(&hjpeg);
+          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
+
+        }while(JpegEncodeProcessing_End == 0);
+
+        HAL_JPEG_DisableHeaderParsing(&hjpeg);
+
+        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
+        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf2, RGB_IMAGE_SIZE, &JPEG_File);
+
+        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
+        do
+        {
+          JPEG_EncodeInputHandler(&hjpeg);
+          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
+
+        }while(JpegEncodeProcessing_End == 0);
+
+
+        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
+        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf3, RGB_IMAGE_SIZE, &JPEG_File);
+
+        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
+        do
+        {
+          JPEG_EncodeInputHandler(&hjpeg);
+          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
+
+        }while(JpegEncodeProcessing_End == 0);
+
+
+        /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
+        JPEG_Encode_DMA(&hjpeg, (uint32_t)jpegBuf4, RGB_IMAGE_SIZE, &JPEG_File);
+
+        /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
+        do
+        {
+          JPEG_EncodeInputHandler(&hjpeg);
+          JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
+
+        }while(JpegEncodeProcessing_End == 0);
+
+
+        /*##-9- Close the JPEG file #######################################*/
+        f_close(&JPEG_File);
+      }
+#if 0
+      jpegBuf = (uint16_t *)( ( (sFrameBuf_t *)cameraMsg.frameBuf )->pFrameBuf1);
+      for (int i=0; i < (153600); i+=2){
+    	 my_swap(jpegBuf[i], jpegBuf[i+1]);
+      };
+#endif
+      //SavePictureMB(cameraMsg.fileName, (sFrameBuf_t *)cameraMsg.frameBuf, (((sFrameBuf_t *)cameraMsg.frameBuf)->size) / 2);
       MX_USB_DEVICE_Start();
       osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE);
       break;
