@@ -74,8 +74,6 @@ void StorageTask(void *argument)
   uint8_t *jpegBuf4;
 
   uint32_t JpegEncodeProcessing_End = 0;
-  RGB_ImageAddress = (uint32_t)Image_RGB565;
-
 
   // Open or create a log file and ready to append
   //fr = f_mkfs("", FM_ANY, 0, work, sizeof(work));
@@ -101,26 +99,6 @@ void StorageTask(void *argument)
   JPEG_InitColorTables();
   MX_JPEG_Init();
 
-#if 0
-  /*##-6- Create the JPEG file with write access ########################*/
-  if(f_open(&JPEG_File, "image51.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
-  {
-    /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
-    JPEG_Encode_DMA(&hjpeg, RGB_ImageAddress, RGB_IMAGE_SIZE, &JPEG_File);
-    
-    /*##-8- Wait till end of JPEG encoding and perfom Input/Output Processing in BackGround  #*/
-    do
-    {
-      JPEG_EncodeInputHandler(&hjpeg);
-      JpegEncodeProcessing_End = JPEG_EncodeOutputHandler(&hjpeg);
-      
-    }while(JpegEncodeProcessing_End == 0);
-    
-    /*##-9- Close the JPEG file #######################################*/
-    f_close(&JPEG_File);
-  }
-#endif
-
   //MX_USB_DEVICE_Start();
 
   for(;;)
@@ -130,7 +108,7 @@ void StorageTask(void *argument)
     switch(flags){
     case CAMERA_EVT_FILE_CREATE:
       res = osMessageQueueGet(cameraQueueHandler, &cameraMsg, 0, osWaitForever);
-      MX_USB_DEVICE_Stop();
+      //MX_USB_DEVICE_Stop();
 
       // swap RGB order in right way for encoder
       jpegBuf1 = (uint16_t *)( ( (sFrameBuf_t *)cameraMsg.frameBuf )->pFrameBuf1);
@@ -164,7 +142,7 @@ void StorageTask(void *argument)
 
 
       /*##-6- Create the JPEG file with write access ########################*/
-      if(f_open(&JPEG_File, "image66.jpg", FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
+      if(f_open(&JPEG_File, cameraMsg.fileName, FA_CREATE_ALWAYS | FA_WRITE ) == FR_OK)
       {
         /*##-7- JPEG Encoding with DMA (Not Blocking ) Method ################*/
         JPEG_Encode_DMA(&hjpeg, (sFrameBuf_t *)(cameraMsg.frameBuf), RGB_IMAGE_SIZE, &JPEG_File);
@@ -187,7 +165,7 @@ void StorageTask(void *argument)
       };
 #endif
       //SavePictureMB(cameraMsg.fileName, (sFrameBuf_t *)cameraMsg.frameBuf, (((sFrameBuf_t *)cameraMsg.frameBuf)->size) / 2);
-      MX_USB_DEVICE_Start();
+      //MX_USB_DEVICE_Start();
       osEventFlagsSet(cameraEvtId, CAMERA_EVT_FILE_CREATE_DONE);
       break;
     case CAMERA_EVT_DIR_CREATE:

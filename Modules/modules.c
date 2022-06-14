@@ -308,7 +308,7 @@ static ScannerStatus_t camera_cmd_parser_cb(uint8_t *cmdStr){
             usbprintf("wrong parameter");
             return SCANNER_ERROR;
         }
-        strcat(camera.pictureName, ".rgb");
+        strcat(camera.pictureName, ".jpg");
         camera.status |= CAMERA_PICTURE_UPDATE_F;
     };
 

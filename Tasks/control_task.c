@@ -56,6 +56,9 @@ ScannerStatus_t scan_start(const char *objName){
 	flags = osEventFlagsWait(cameraEvtId, CAMERA_EVT_DIR_CREATE_DONE, osFlagsWaitAny, osWaitForever);
 	if ( !(flags & CAMERA_EVT_DIR_CREATE_DONE) )
 		usbprintf("Dir creating error");
+
+	MX_USB_DEVICE_Stop();
+
 	// цикл (12 раз - 360гр.)
 	for (uint8_t i=0; i < 18; i++){
 		// включить лазер
@@ -64,7 +67,7 @@ ScannerStatus_t scan_start(const char *objName){
 		camera_get_frame(&new_frame_buffer);
 		// сохранить фотографию
 		cameraMsg.frameBuf = (uint32_t *) &new_frame_buffer;
-		sprintf(pictureName, "im%d.rgb", 2*i);
+		sprintf(pictureName, "im%d.jpg", 2*i);
 		sprintf(picturePath, "%s/%s", objName, pictureName);
 		strncpy(cameraMsg.fileName, picturePath, CAMERA_FILES_MAX_LENGTH);
 		osRes = osMessageQueuePut (cameraQueueHandler, &cameraMsg, 0, 0);
@@ -78,7 +81,7 @@ ScannerStatus_t scan_start(const char *objName){
 		camera_get_frame(&new_frame_buffer);
 		// сохранить фотографию
 		cameraMsg.frameBuf = (uint32_t *) &new_frame_buffer;
-		sprintf(pictureName, "im%d.rgb", 2*i+1);
+		sprintf(pictureName, "im%d.jpg", 2*i+1);
 		sprintf(picturePath, "%s/%s", objName, pictureName);
 		strncpy(cameraMsg.fileName, picturePath, CAMERA_FILES_MAX_LENGTH);
 		osRes = osMessageQueuePut (cameraQueueHandler, &cameraMsg, 0, 0);
@@ -89,6 +92,8 @@ ScannerStatus_t scan_start(const char *objName){
 		// повернуть на 30гр.
 		stepM_rotate(11);
 	}
+
+	MX_USB_DEVICE_Start();
 };
 
 /**
