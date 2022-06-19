@@ -5,6 +5,7 @@
  *      Author: George
  */
 
+#include <iencoder_task.h>
 #include "terminal.h"
 
 #include "cmsis_os2.h"
@@ -18,12 +19,13 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "modules_task.h"
 #include "stm32h7xx_hal.h"
 
+extern osThreadId_t controlTaskHandle;
 extern osMessageQueueId_t cmdQueueHandler;
 extern osMessageQueueId_t cameraQueueHandler;
 extern osEventFlagsId_t cameraEvtId;
+extern osSemaphoreId_t calibrationSem;
 
 typedef enum{
 	WAIT,
@@ -143,24 +145,26 @@ void ControlTask(void *argument)
 //    	usbprintf(ucRxData);
 
     	sscanf(msg, "%s", strBuf);
-		if (!strncmp(strBuf, "scan", strlen("scan"))){
-			gScannerMode = SCANNING;
-			sscanf(msg, "%*s -object:%s", strBuf);
-			// запустить сканирование
-			scan_start(strBuf);
-			usbprintf("scan object name - %s", strBuf);
-			osDelay(1000);
-			}
-		else if (!strncmp(strBuf, "calibrate", strlen("calibrate"))){
-			gScannerMode = CALIBRATION;
-			// просто переход в режим калибровки и ожидание других команд
-			usbprintf("calibrate");
-			osDelay(1000);
-			}
-		else if (!strncmp(strBuf, "exit", strlen("exit"))){
+    	if (!strncmp(strBuf, "exit", strlen("exit"))){
 				usbprintf("exit");
 				// прекращение всех процессов и переход к начальному состоянию
 				osDelay(1000);
+			}
+		else if (!strncmp(strBuf, "scan", strlen("scan"))){
+				gScannerMode = SCANNING;
+				sscanf(msg, "%*s -object:%s", strBuf);
+				// запустить сканирование
+				scan_start(strBuf);
+				usbprintf("scan object name - %s", strBuf);
+				osDelay(1000);
+			}
+		else if (!strncmp(strBuf, "calibrate", strlen("calibrate"))){
+				gScannerMode = CALIBRATION;
+				// просто переход в режим калибровки и ожидание других команд
+				usbprintf("calibrate");
+				osDelay(1000);
+				osSemaphoreRelease(calibrationSem);
+				osThreadSuspend(controlTaskHandle);
 			}
 		else if (!module_cmd_parse(phModules, msg, &moduleId)){
 			if (gScannerMode == CALIBRATION){
@@ -170,11 +174,12 @@ void ControlTask(void *argument)
 			} else {
 				usbprintf("go to calibration mode");
 			}
+			osSemaphoreRelease(calibrationSem);
+			osThreadSuspend(controlTaskHandle);
 		}
 		else {
 			usbprintf("wrong command");
 		}
-
 
     }
 

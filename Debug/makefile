@@ -17,6 +17,7 @@ RM := rm -rf
 -include Modules/Stepper_Motor/subdir.mk
 -include Modules/Laser/subdir.mk
 -include Modules/Jpeg/subdir.mk
+-include Modules/Iencoder/subdir.mk
 -include Modules/Cam_OV7670/subdir.mk
 -include Modules/subdir.mk
 -include FreeRTOS/Source/portable/MemMang/subdir.mk

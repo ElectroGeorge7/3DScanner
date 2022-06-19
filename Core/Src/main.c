@@ -17,6 +17,7 @@
  ******************************************************************************
  */
 
+#include <iencoder_task.h>
 #include "main.h"
 #include <stdio.h>
 
@@ -31,7 +32,6 @@
 
 #include "storage_task.h"
 #include "control_task.h"
-#include "modules_task.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -44,9 +44,9 @@ const osThreadAttr_t controlTask_attributes = {
   .stack_size = 768 * 4
 };
 
-osThreadId_t modulesTaskHandle;
-const osThreadAttr_t modulesTask_attributes = {
-  .name = "modulesTask",
+osThreadId_t iencoderTaskHandle;
+const osThreadAttr_t iencoderTask_attributes = {
+  .name = "iencoderTask",
   .priority = (osPriority_t) osPriorityNormal1,
   .stack_size = 128 * 4
 };
@@ -72,6 +72,8 @@ const osMessageQueueAttr_t cameraQueue = {
 };
 
 osEventFlagsId_t cameraEvtId;                 // event flags id
+
+osSemaphoreId_t calibrationSem;					// semaphore id
 
 
 static void CPU_CACHE_Enable(void)
@@ -114,33 +116,19 @@ int main(void)
     usbprintf("Camera Event Flag object not created");
   }
 
+  calibrationSem = osSemaphoreNew(1U, 0U, NULL);
+  if (calibrationSem == NULL) {
+	  usbprintf("Semaphore object not created");
+  }
+
   controlTaskHandle = osThreadNew(ControlTask, NULL, &controlTask_attributes);
-  modulesTaskHandle = osThreadNew(ModulesTask, NULL, &modulesTask_attributes);
+  iencoderTaskHandle = osThreadNew(IencoderTask, NULL, &iencoderTask_attributes);
   storageTaskHandle = osThreadNew(StorageTask, NULL, &storageTask_attributes);
 
   osKernelStart();
 
   /* Loop forever */
   while(1){}
-}
-
-
-
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM13 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  if (htim->Instance == TIM13) {
-    HAL_IncTick();
-  }
-
 }
 
 

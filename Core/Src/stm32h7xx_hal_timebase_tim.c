@@ -103,6 +103,24 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   return HAL_ERROR;
 }
 
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM13 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim->Instance == TIM13) {
+    HAL_IncTick();
+  }
+
+}
+
+
 /**
   * @brief  Suspend Tick increment.
   * @note   Disable the tick increment by disabling TIM13 update interrupt.

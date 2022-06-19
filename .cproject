@@ -46,7 +46,6 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1425159754" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Core/Inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Apps}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Drivers/CMSIS/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Drivers/CMSIS/Device/ST/STM32H7xx/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Drivers/STM32H7xx_HAL_Driver/Inc}&quot;"/>
@@ -69,6 +68,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Laser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Stepper_Motor}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Jpeg}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/3DScanner/Modules/Iencoder}&quot;"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.488012501" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu11" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1743111586" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
