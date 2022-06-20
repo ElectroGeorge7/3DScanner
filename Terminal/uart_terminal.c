@@ -1,10 +1,14 @@
 /**
+ * @author Katukiya G.
+ * 
  * @file uart_terminal.h
  *
  * @brief Communication control with terminal by uart interface.
  */
 
 #include "uart_terminal.h"
+ 
+#include "main.h" // Error_Handler();
 
 #include <string.h>
 #include <stdio.h>
@@ -45,7 +49,7 @@ HAL_StatusTypeDef uart_terminal_print(uint8_t *string){
 			return HAL_OK;
 		}
 	}else{
-		 // создать сообщение об ошибке, и затем показать её в реестре ошибок.
+		Error_Handler();
 	}
 }
 
@@ -63,10 +67,12 @@ HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len){
 			return HAL_OK;
 		}
 	}else{
-		// создать сообщение об ошибке, и затем показать её в реестре ошибок.
+		Error_Handler();
 	}
 }
 
+// now only usb terminal is used for recieving cmds
+#if 0
 /**
  * @brief Define and add to the queue the command from terminal received by uart
  * @return  HAL_OK - success,
@@ -76,7 +82,7 @@ HAL_StatusTypeDef uart_terminal_mem_transmit(uint8_t *memArr, uint16_t len){
  * @todo Сделать проверки корректности заполнения структур модулей,
  * 		 при неправильном заполнении бывает HardFault
  */
-#if 0
+
 HAL_StatusTypeDef uart_terminal_cmd_def(void){
 	uint16_t i=0;
 	uint16_t moduleNmb = 0;
@@ -178,7 +184,9 @@ static uint8_t * uart_terminal_scanf(void){
 						return UartTermRxBuf;
 		}
 	}
-	// создать сообщение об ошибке, и затем показать её в реестре ошибок.
+
+	Error_Handler();
+
 	return NULL;
 }
 

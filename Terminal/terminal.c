@@ -1,9 +1,11 @@
-/*
- * terminal.c
+/**
+ * @author Katukiya G.
  *
- *  Created on: 19 апр. 2022 г.
- *      Author: George
+ * @file terminal.c
+ *
+ * @brief UART and USB terminals control.
  */
+
 #include "terminal.h"
 
 #include <string.h>
@@ -11,15 +13,17 @@
 #include "uart_terminal.h"
 #include "usb_device.h"
 
+__section (".ram_d3") static char __aligned(32) uartprintbuf[256 + 3] = {'\0'};
+__section (".ram_d3") static char __aligned(32) usbprintbuf[256 + 3] = {'\0'};
 
+/// @brief Init uart terminal
+/// @note Usb terminal is inited by USB stack init
 void terminal_init(void){
 	uart_terminal_init();
 }
 
-
-__section (".ram_d3") static char __aligned(32) uartprintbuf[256 + 3] = {'\0'};
+/// @brief printf() in uart console
 void uartconsole_printf(const char* fmt, ...){
-    //char printbuf[128 + 2] = {0};
     va_list args;
     size_t size = 0;
     va_start(args, fmt);
@@ -36,10 +40,8 @@ void uartconsole_printf(const char* fmt, ...){
     uart_terminal_print(uartprintbuf);
 }
 
-
-__section (".ram_d3") static char __aligned(32) usbprintbuf[256 + 3] = {'\0'};
+/// @brief printf() in usb console
 void usbconsole_printf(const char* fmt, ...){
-    //char printbuf[128 + 2] = {0};
     va_list args;
     size_t size = 0;
     va_start(args, fmt);

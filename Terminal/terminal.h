@@ -1,3 +1,10 @@
+/**
+ * @author Katukiya G.
+ *
+ * @file terminal.h
+ *
+ * @brief UART and USB terminals control.
+ */
 
 #ifndef TERMINAL_H_
 #define TERMINAL_H_
