@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    usbd_cdc_msc.h
-  * @brief   Header file for the usbd_cdc_msc.c file.
+  * @brief   Header file for the usbd_cdc_msc.c
   ******************************************************************************
   */
 

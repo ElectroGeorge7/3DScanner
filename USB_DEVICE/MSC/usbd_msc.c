@@ -32,54 +32,10 @@
   ******************************************************************************
   */
 
-/* BSPDependencies
-- "stm32xxxxx_{eval}{discovery}{nucleo_144}.c"
-- "stm32xxxxx_{eval}{discovery}_io.c"
-- "stm32xxxxx_{eval}{discovery}{adafruit}_sd.c"
-EndBSPDependencies */
-
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_msc.h"
 
 
-/** @addtogroup STM32_USB_DEVICE_LIBRARY
-  * @{
-  */
-
-
-/** @defgroup MSC_CORE
-  * @brief Mass storage core module
-  * @{
-  */
-
-/** @defgroup MSC_CORE_Private_TypesDefinitions
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup MSC_CORE_Private_Defines
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-
-/** @defgroup MSC_CORE_Private_Macros
-  * @{
-  */
-/**
-  * @}
-  */
-
-
-/** @defgroup MSC_CORE_Private_FunctionPrototypes
-  * @{
-  */
 uint8_t USBD_MSC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
 uint8_t USBD_MSC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
 uint8_t USBD_MSC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
@@ -90,15 +46,6 @@ uint8_t *USBD_MSC_GetHSCfgDesc(uint16_t *length);
 uint8_t *USBD_MSC_GetFSCfgDesc(uint16_t *length);
 uint8_t *USBD_MSC_GetOtherSpeedCfgDesc(uint16_t *length);
 uint8_t *USBD_MSC_GetDeviceQualifierDescriptor(uint16_t *length);
-
-/**
-  * @}
-  */
-
-
-/** @defgroup MSC_CORE_Private_Variables
-  * @{
-  */
 
 
 USBD_ClassTypeDef  USBD_MSC =
@@ -177,14 +124,6 @@ __ALIGN_BEGIN static uint8_t USBD_MSC_DeviceQualifierDesc[USB_LEN_DEV_QUALIFIER_
   0x01,
   0x00,
 };
-/**
-  * @}
-  */
-
-
-/** @defgroup MSC_CORE_Private_Functions
-  * @{
-  */
 
 /**
   * @brief  USBD_MSC_Init
@@ -253,6 +192,7 @@ uint8_t USBD_MSC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
 
   return (uint8_t)USBD_OK;
 }
+
 /**
 * @brief  USBD_MSC_Setup
 *         Handle the MSC specific requests
@@ -446,19 +386,5 @@ uint8_t USBD_MSC_RegisterStorage(USBD_HandleTypeDef *pdev, USBD_StorageTypeDef *
 
   return (uint8_t)USBD_OK;
 }
-
-/**
-  * @}
-  */
-
-
-/**
-  * @}
-  */
-
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

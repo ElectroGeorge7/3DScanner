@@ -28,29 +28,14 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include  "usbd_ioreq.h"
 
-/** @addtogroup STM32_USB_DEVICE_LIBRARY
-  * @{
-  */
-
-/** @defgroup usbd_cdc
-  * @brief This file is the Header file for usbd_cdc.c
-  * @{
-  */
-
-
-/** @defgroup usbd_cdc_Exported_Defines
-  * @{
-  */
 //#define CDC_IN_EP                                   0x81U  /* EP1 for data IN */
 //#define CDC_OUT_EP                                  0x01U  /* EP1 for data OUT */
 //#define CDC_CMD_EP                                  0x82U  /* EP2 for CDC commands */
 
-/*
+//#ifndef CDC_HS_BINTERVAL
+//#define CDC_HS_BINTERVAL                            0x10U
+//#endif
 
-#ifndef CDC_HS_BINTERVAL
-#define CDC_HS_BINTERVAL                            0x10U
-#endif
-*/
 #ifndef CDC_FS_BINTERVAL
 #define CDC_FS_BINTERVAL                            0x10U
 #endif
@@ -63,10 +48,9 @@ extern "C" {
 
 
 #define USB_CDC_CONFIG_DESC_SIZ                     67U
-/*
-#define CDC_DATA_HS_IN_PACKET_SIZE                  CDC_DATA_HS_MAX_PACKET_SIZE
-#define CDC_DATA_HS_OUT_PACKET_SIZE                 CDC_DATA_HS_MAX_PACKET_SIZE
-*/
+
+//#define CDC_DATA_HS_IN_PACKET_SIZE                  CDC_DATA_HS_MAX_PACKET_SIZE
+//#define CDC_DATA_HS_OUT_PACKET_SIZE                 CDC_DATA_HS_MAX_PACKET_SIZE
 #define CDC_DATA_FS_IN_PACKET_SIZE                  CDC_DATA_FS_MAX_PACKET_SIZE
 #define CDC_DATA_FS_OUT_PACKET_SIZE                 CDC_DATA_FS_MAX_PACKET_SIZE
 
@@ -84,18 +68,7 @@ extern "C" {
 #define CDC_SET_CONTROL_LINE_STATE                  0x22U
 #define CDC_SEND_BREAK                              0x23U
 
-/**
-  * @}
-  */
 
-
-/** @defgroup USBD_CORE_Exported_TypesDefinitions
-  * @{
-  */
-
-/**
-  * @}
-  */
 typedef struct
 {
   uint32_t bitrate;
@@ -129,35 +102,16 @@ typedef struct _USBD_CDC_HandleTypeDef
 } USBD_CDC_HandleTypeDef;
 
 
-
-/** @defgroup USBD_CORE_Exported_Macros
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup USBD_CORE_Exported_Variables
-  * @{
-  */
-
 extern USBD_ClassTypeDef USBD_CDC;
 #define USBD_CDC_CLASS &USBD_CDC
-/**
-  * @}
-  */
 
- uint8_t USBD_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
- uint8_t USBD_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
- uint8_t USBD_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
- uint8_t USBD_CDC_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum);
- uint8_t USBD_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum);
- uint8_t USBD_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev);
+uint8_t USBD_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
+uint8_t USBD_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx);
+uint8_t USBD_CDC_Setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req);
+uint8_t USBD_CDC_DataIn(USBD_HandleTypeDef *pdev, uint8_t epnum);
+uint8_t USBD_CDC_DataOut(USBD_HandleTypeDef *pdev, uint8_t epnum);
+uint8_t USBD_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev);
 
-/** @defgroup USB_CORE_Exported_Functions
-  * @{
-  */
 uint8_t USBD_CDC_RegisterInterface(USBD_HandleTypeDef *pdev,
                                    const USBD_CDC_ItfTypeDef *fops);
 
@@ -169,24 +123,10 @@ uint8_t USBD_CDC_ReceivePacket(USBD_HandleTypeDef *pdev);
 uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev);
 
 
-
-
-
-/**
-  * @}
-  */
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif  /* __USB_CDC_H */
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
